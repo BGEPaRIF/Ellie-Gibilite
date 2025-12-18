@@ -1,823 +1,806 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #202126; -webkit-text-stroke: #202126}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #202126; -webkit-text-stroke: #202126; min-height: 14.0px}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outil d'Éligibilité - BGE PaRIF</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="fr"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Outil d'Éligibilité - BGE PaRIF&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"&gt;&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"&gt;&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/@babel/standalone/babel.min.js"&gt;&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: 'Poppins', sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="root"&gt;&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script type="text/babel"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// import React, { useState } from 'react';</span></p>
-<p class="p1"><span class="s1">import { AlertCircle, CheckCircle, ChevronRight, RotateCcw, ExternalLink } from 'lucide-react';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">const EligibilityTool = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// Ajout de la police Poppins</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>React.useEffect(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const link = document.createElement('link');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>link.rel = 'stylesheet';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.head.appendChild(link);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.body.style.fontFamily = "'Poppins', sans-serif";</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>return () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.body.style.fontFamily = '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>};</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}, []);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [step, setStep] = useState(0);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [answers, setAnswers] = useState({});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const [results, setResults] = useState(null);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// Logique conditionnelle pour déterminer les questions à afficher</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const getQuestions = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const baseQuestions = [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>id: 'entrepriseCreee',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>question: 'Avez-vous déjà créé votre entreprise ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Si entreprise créée</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (answers.entrepriseCreee === 'Oui') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>id: 'typeEntreprise',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>question: 'Quel est le statut juridique de votre entreprise ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>options: ['Micro-entreprise', 'Société (SARL, SAS, etc.)']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>id: 'ageEntreprise',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>question: 'Depuis combien de temps existe-t-elle ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>options: ['Moins de 3 ans', 'Plus de 3 ans']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (answers.typeEntreprise === 'Société (SARL, SAS, etc.)') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>id: 'caAnnuel',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>question: 'Quel est votre chiffre d\'affaires annuel ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>options: ['Moins de 30 000 €', 'Plus de 30 000 €']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Si entreprise non créée</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (answers.entrepriseCreee === 'Non') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>id: 'stadeProjet',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>question: 'À quel stade en est votre projet ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>options: ['Idée', 'Projet formalisé', 'Business plan finalisé']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (answers.stadeProjet === 'Projet formalisé') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>id: 'projetImpact',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>question: 'Votre projet est-il considéré comme projet à impact (social et/ou environnemental) ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (answers.stadeProjet === 'Projet formalisé' || answers.stadeProjet === 'Business plan finalisé') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>id: 'activiteReglementee',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>question: 'Votre projet concerne-t-il l\'une des activités suivantes : activité libérale réglementée ou assimilée, activités immobilières, secteur médical et médico-social, activités financières et d\'assurance, production agricole primaire, pêche, aquaculture, sylviculture ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Questions personnelles</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'sexe',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Vous êtes :',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Une femme', 'Un homme']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'age',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Quel est votre âge ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'number',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>placeholder: 'Ex: 30'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const age = parseInt(answers.age) || 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (age &gt;= 18 &amp;&amp; age &lt;= 30) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>id: 'missionLocale',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>question: 'Êtes-vous inscrit(e) auprès d\'une Mission Locale ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'codePostal',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Quel est votre code postal de résidence ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'text',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>placeholder: 'Ex: 75001'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'qpv',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Résidez-vous en Quartier Prioritaire de la Ville (QPV) ou dans un rayon de 300 mètres autour ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Oui', 'Non', 'Je ne sais pas'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>info: 'Vous pouvez vérifier sur https://sig.ville.gouv.fr/'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Parcours et situation</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'niveauEtude',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Quel est votre niveau d\'étude ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Inférieur au CAP/BEP', 'CAP/BEP', 'Baccalauréat', 'Bac+2 et plus']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'statut',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Quel est votre statut actuel ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'checkbox',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Demandeur d\'emploi', 'Salarié à temps complet', 'Salarié à temps partiel', 'Bénéficiaire RSA', 'Bénéficiaire ASS', 'Bénéficiaire AAH']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (answers.statut?.includes('Demandeur d\'emploi')) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>id: 'dureeDemandeurEmploi',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>question: 'Depuis combien de temps êtes-vous demandeur d\'emploi ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>options: ['Moins de 12 mois', 'De 12 à 24 mois', 'Plus de 24 mois']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'inscritFranceTravail',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Êtes-vous inscrit(e) à France Travail ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} else if (!isSalariePleinTemps) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Si pas salarié à temps complet mais pas demandeur d'emploi non plus</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'inscritFranceTravail',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Êtes-vous inscrit(e) à France Travail ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Critères spécifiques</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'criteresSociaux',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Cochez toutes les situations qui vous concernent :',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'checkbox',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'Parent isolé',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'Sans domicile fixe (SDF)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'Récemment arrivé en France',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'Sortant de l\'ASE (Aide Sociale à l\'Enfance)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'Résidence en ZRR (Zone de Revitalisation Rurale)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>'Aucun de ces critères'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>]</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'handicap',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Êtes-vous reconnu(e) travailleur(se) en situation de handicap (RQTH) ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (answers.handicap === 'Oui') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>id: 'inscritCapEmploi',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>question: 'Êtes-vous inscrit(e) à Cap Emploi ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'sortieIAE',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Êtes-vous sorti(e) d\'un dispositif IAE (Insertion par l\'Activité Économique) depuis moins de 6 mois ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Oui', 'Non']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>baseQuestions.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>id: 'cpf',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>question: 'Disposez-vous de crédits CPF (Compte Personnel de Formation) ?',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>type: 'radio',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>options: ['Oui', 'Non', 'Je ne sais pas'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>info: 'Pour le découvrir, connectez-vous à votre espace personnel sur www.moncompteformation.gouv.fr'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>return baseQuestions;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// Fonction pour rendre les liens et emails cliquables</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const renderClickableText = (text) =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!text) return null;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Regex pour détecter les URLs</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const urlRegex = /(https?:\/\/[^\s]+)/g;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Regex pour détecter les emails</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let parts = [text];</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Remplacer les URLs</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>parts = parts.flatMap(part =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (typeof part !== 'string') return part;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>return part.split(urlRegex).map((segment, i) =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if (urlRegex.test(segment)) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>return (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;a</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>key={`url-${i}`}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>href={segment}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>target="_blank"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>rel="noopener noreferrer"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>{segment} &lt;ExternalLink size={12} className="ml-1" /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return segment;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Remplacer les emails</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>parts = parts.flatMap(part =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (typeof part !== 'string') return part;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>return part.split(emailRegex).map((segment, i) =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if (emailRegex.test(segment)) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>return (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;a</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>key={`email-${i}`}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>href={`mailto:${segment}`}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>className="text-blue-600 hover:text-blue-800 underline"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>{segment}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return segment;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>return &lt;&gt;{parts}&lt;/&gt;;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const calculateEligibility = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const eligible = [];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const a = answers;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Helper functions</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isQPV = a.qpv === 'Oui' || a.qpv === 'Je ne sais pas'; // Inclut "Je ne sais pas"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isDept75 = a.codePostal?.startsWith('75');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isDept93 = a.codePostal?.startsWith('93');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isIDF = ['75', '77', '78', '91', '92', '93', '94', '95'].some(d =&gt; a.codePostal?.startsWith(d));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const entrepriseCreee = a.entrepriseCreee === 'Oui';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const age = parseInt(a.age) || 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isJeune = age &gt;= 18 &amp;&amp; age &lt;= 30;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isSenior = age &gt;= 50;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isRSA = a.statut?.includes('Bénéficiaire RSA');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isASS = a.statut?.includes('Bénéficiaire ASS');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isAAH = a.statut?.includes('Bénéficiaire AAH');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isDemandeurEmploi = a.statut?.includes('Demandeur d\'emploi');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isSalariePleinTemps = a.statut?.includes('Salarié à temps complet');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isDETLD = a.dureeDemandeurEmploi === 'Plus de 24 mois';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isDELD = a.dureeDemandeurEmploi === 'De 12 à 24 mois';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const niveauEtudeInferieur = ['Inférieur au CAP/BEP', 'CAP/BEP'].includes(a.niveauEtude);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// Codes postaux Incubatest</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const codesPostIncubatest = ['95400', '95500', '95720', '95380', '77410', '77290', '77230', '95440', '95190', '95470', '95140', '77990', '95670', '77280', '95700', '95200', '77270', '91120', '91140', '91160', '91190', '91300', '91310', '91320', '91360', '91370', '91400', '91430', '91440', '91460', '91620', '91940', '91800', '91860', '91560', '91210', '91480', '91270', '91330', '75001', '75002', '75003', '75004', '75005', '75006', '75007', '75008', '75009', '75010', '75011', '75012', '75013', '75014', '75015', '75016', '75017', '75018', '75019', '75020'];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const isVilleIncubatest = codesPostIncubatest.includes(a.codePostal);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 1. ACCÉLÉRATEUR EMERGENCE</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!entrepriseCreee &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>(a.stadeProjet === 'Idée' || a.stadeProjet === 'Projet formalisé') &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>isQPV &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>!isSalariePleinTemps) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Accélérateur Émergence',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Programme d\'accompagnement intensif destiné aux porteurs de projet au stade de l\'idée ou du projet, visant à structurer, valider et lancer une activité entrepreneuriale en un temps record.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Environ 200 heures sur 6 mois',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Plus de 100 heures de formation', 'Accompagnement individuel', 'Ateliers collectifs', 'Sessions de mise en réseau'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>enSavoirPlus: 'https://emergence.bge-parif.com',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Prendre contact avec l\'équipe Accélérateurs de BGE PaRIF par email : accelerateurs@bge-parif.com',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Dispositif sélectif - Une sélection est effectuée après étude du dossier'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 2. ACCÉLÉRATEUR CRÉATION INDIVIDUELLE</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (entrepriseCreee &amp;&amp; isQPV) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const ageOk = a.ageEntreprise === 'Moins de 3 ans';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const caOk = a.typeEntreprise === 'Micro-entreprise' || a.caAnnuel === 'Moins de 30 000 €';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (ageOk &amp;&amp; caOk) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>nom: 'Accélérateur Création Individuelle',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>description: 'Programme sur-mesure pour les entrepreneurs en phase de croissance ou de développement qui souhaitent structurer leur activité et augmenter considérablement leur chiffre d\'affaires.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>duree: 'Environ 250 heures sur 12 mois',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>contenu: ['Plus de 100 heures de formation', 'Accompagnement individuel', 'Ateliers collectifs', 'Sessions de mise en réseau'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>enSavoirPlus: 'https://creation-individuelle.bge-parif.com/',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>procedure: 'Prendre contact avec l\'équipe Accélérateurs de BGE PaRIF par email : accelerateurs@bge-parif.com',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>note: 'Dispositif sélectif - Une sélection est effectuée après étude du dossier'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 3. FORMATIONS CERTIFIANTES</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (a.cpf === 'Oui' || a.cpf === 'Je ne sais pas') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Formations Certifiantes',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Formations certifiantes destinées aux créateurs, dirigeants ou repreneurs d\'entreprise afin de développer des compétences entrepreneuriales clés.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Variable selon la formation (de 14h à 95h)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>'CCPE (Construire et Conduire un Projet Entrepreneurial) - 95h : Formation complète pour étudier la faisabilité d\'un projet de création ou reprise en acquérant une méthodologie de conduite de projet',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>'DVRS (Développez la visibilité sur les réseaux sociaux) - 14h : Apprenez à créer un profil, développer des communautés et gérer votre e-réputation sur les réseaux sociaux',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>'Piloter sa micro-entreprise - 21h : Acquérir les compétences pour la gestion et le développement d\'une micro-entreprise (imposition, cotisations, comptabilité, pilotage)'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/ OU prendre RDV : https://calendly.com/bgeparif/conseil-formation-entrepreneurial-1',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: a.cpf === 'Je ne sais pas'<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>? 'Ces formations sont finançables par vos crédits CPF. Pour connaître votre solde CPF, connectez-vous sur www.moncompteformation.gouv.fr'<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>: 'Formations finançables par vos crédits CPF'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 4. GÉNÉRATEUR À IMPACT</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!entrepriseCreee &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>a.stadeProjet === 'Projet formalisé' &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>a.projetImpact === 'Oui' &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>isDept75) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Générateur à Impact',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Dispositif d\'accompagnement qui permet de confronter vos idées avec des experts, d\'évaluer toutes les options pour entreprendre autrement et de structurer votre modèle économique et stratégie.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Environ 28 heures (ateliers tous les 15 jours + RDV individuels)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Ateliers collectifs thématiques orientés impact', 'Rendez-vous individuels avec expert', 'Construction du business model', 'Élaboration d\'un plan d\'action et pitch-deck'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>enSavoirPlus: 'https://www.bge-parif.com/structurer-votre-projet/incubateur-parisien-le-generateur-a-impact/',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Réservé aux projets à impact dans le département 75'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 5. INCUBATEST</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!entrepriseCreee &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>(a.stadeProjet === 'Projet formalisé' || a.stadeProjet === 'Business plan finalisé') &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>isVilleIncubatest &amp;&amp;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>a.activiteReglementee === 'Non' &amp;&amp;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>!isSalariePleinTemps) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Incubatest',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Les couveuses IncubaTest permettent de tester une activité entrepreneuriale dans un cadre sécurisé, avec le statut d\'entrepreneur à l\'essai.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Période de test de 6 à 8 mois (15h de RDV individuels + 6 jours de formations)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Rendez-vous individuels', 'Ateliers et formations opérationnelles', 'Appui au développement commercial', 'Communication et gestion'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>enSavoirPlus: 'https://www.bge-parif.com/tester-votre-activite-en-couveuse-incubatest/',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Sous réserve que l\'activité soit éligible. Exclu pour activités réglementées'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 6. CRÉER SA RÉUSSITE</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!entrepriseCreee) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>let criteresN2 = 0;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (niveauEtudeInferieur) criteresN2++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (isSenior) criteresN2++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (isDELD) criteresN2++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (isQPV || a.criteresSociaux?.includes('Résidence en ZRR (Zone de Revitalisation Rurale)')) criteresN2++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (a.criteresSociaux?.includes('Sans domicile fixe (SDF)')) criteresN2++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (a.criteresSociaux?.includes('Parent isolé')) criteresN2++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (a.criteresSociaux?.includes('Récemment arrivé en France')) criteresN2++;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const porte1 = (isRSA || isASS || isAAH) || isDETLD;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const porte2 = criteresN2 &gt;= 3;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const porte3 = isJeune &amp;&amp; (a.missionLocale === 'Oui' || a.criteresSociaux?.includes('Sortant de l\'ASE (Aide Sociale à l\'Enfance)') || criteresN2 &gt;= 1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const porte4 = a.handicap === 'Oui' &amp;&amp; (a.inscritCapEmploi === 'Oui' || criteresN2 &gt;= 1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const porte5 = a.sortieIAE === 'Oui';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (porte1 || porte2 || porte3 || porte4 || porte5) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>nom: 'Créer Sa Réussite',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>description: 'Programme d\'accompagnement personnalisé visant à améliorer l\'accès à la création ou à la reprise d\'entreprise, en adaptant le parcours aux besoins du bénéficiaire.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>duree: 'Jusqu\'à 10h d\'accompagnement individuel ou collectif',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>contenu: ['Entretiens individuels', 'Ateliers collectifs', 'Complément ou prolongation d\'un parcours existant'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>enSavoirPlus: 'https://www.bge-parif.com/structurer-votre-projet/creer-sa-reussite/',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>procedure: 'Contacter BGE PaRIF par email (contact@bge-parif.com) ou téléphone (01 43 55 09 48)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>note: 'Programme adapté aux publics prioritaires'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 7. PDI 75</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if ((isRSA || isASS) &amp;&amp; isDETLD &amp;&amp; isDept75 &amp;&amp; !entrepriseCreee) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'PDI 75',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Programme départemental d\'insertion visant à faciliter l\'accès à l\'emploi et à la création d\'entreprise pour les bénéficiaires du dispositif.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Entre 7 à 8 heures d\'accompagnement individuel',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Accompagnement individuel par un conseiller expert en création d\'entreprise'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Se rapprocher de son conseiller insertion ou France Travail, OU contacter BGE PaRIF (contact@bge-parif.com / 01 43 55 09 48)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Réservé aux bénéficiaires RSA/ASS en DETLD dans le 75'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 8. PDI 93</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if ((isRSA || isASS) &amp;&amp; isDETLD &amp;&amp; isDept93 &amp;&amp; !entrepriseCreee) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'PDI 93',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Programme départemental d\'insertion visant à faciliter l\'accès à l\'emploi et à la création d\'entreprise pour les bénéficiaires du dispositif.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Entre 7 à 8 heures d\'accompagnement individuel',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Accompagnement individuel par un conseiller expert en création d\'entreprise'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Se rapprocher de son conseiller insertion ou France Travail, OU contacter BGE PaRIF (contact@bge-parif.com / 01 43 55 09 48)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Réservé aux bénéficiaires RSA/ASS en DETLD dans le 93'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 9. ACCOMPAGNEMENT RENFORCÉ</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (!entrepriseCreee &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>(a.stadeProjet === 'Projet formalisé' || a.stadeProjet === 'Business plan finalisé') &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>isQPV) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Accompagnement Renforcé',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Dispositif visant à proposer un soutien intensif aux porteurs de projet ou entrepreneurs issus ou implantés dans des quartiers prioritaires (QPV) ou zones équivalentes.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Parcours de 10 heures en individuel ou collectif',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Accompagnement individualisé renforcé', 'Élaboration du plan d\'action', 'Stratégie commerciale, business plan, choix juridique', 'Gestion d\'entreprise et outils de financement'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Contacter BGE PaRIF par email (contact@bge-parif.com) ou téléphone (01 43 55 09 48)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Réservé aux projets formalisés en QPV'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 10. AGEFIPH</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (a.handicap === 'Oui' &amp;&amp; !entrepriseCreee &amp;&amp; a.stadeProjet !== 'Idée') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'AGEFIPH',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Accompagnement favorisant la création d\'entreprise et l\'insertion professionnelle des personnes en situation de handicap dans les entreprises.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Phase ante-création : jusqu\'à 25h / Phase post-création : jusqu\'à 15h sur 3 ans',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Accompagnement sur-mesure', 'Montage du projet', 'Démarrage de l\'activité sur 3 ans', 'Suivi post-création'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Se rapprocher de son conseiller Cap Emploi OU de France Travail en exprimant sa volonté de bénéficier du dispositif AGEFIPH',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Reconnaissance RQTH obligatoire'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 11. PASS ENTREPRENEUR #LEADER 1</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const exclusLeader1 = (a.sexe === 'Un homme' &amp;&amp; isSalariePleinTemps &amp;&amp; age &gt; 30);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const activiteExclueLeader = a.activiteReglementee === 'Oui';</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (age &gt;= 18 &amp;&amp; isIDF &amp;&amp; a.stadeProjet !== 'Idée' &amp;&amp; !entrepriseCreee &amp;&amp; !exclusLeader1 &amp;&amp; !activiteExclueLeader) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Pass Entrepreneur #Leader 1',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Dispositif d\'accompagnement individuel destiné aux porteurs de projet en phase de création.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Entre 3 et 7 heures selon votre profil',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Élaboration d\'un plan d\'action structuré', 'Définition de la stratégie commerciale et business plan', 'Choix du statut juridique, fiscal et social', 'Fondamentaux de la gestion d\'entreprise', 'Solutions de financement'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Compléter le formulaire en ligne : https://airtable.com/appH6ML4Ix5hyPhQQ/shrYF8iz0OnKJMYlC',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Financé par la Région Île-de-France'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 12. PASS ENTREPRENEUR #LEADER 3</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (entrepriseCreee &amp;&amp; isIDF &amp;&amp; a.ageEntreprise === 'Moins de 3 ans' &amp;&amp; !activiteExclueLeader) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Pass Entrepreneur #Leader 3',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Dispositif d\'accompagnement individuel destiné aux dirigeants d\'entreprise en phase de développement.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Entre 3 et 7 heures selon votre profil',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Pilotage efficace de l\'entreprise', 'Mise en œuvre de l\'action commerciale', 'Développement du réseau et opportunités d\'affaires', 'Maîtrise des processus de recrutement', 'Sécurisation du développement'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Compléter le formulaire en ligne : https://airtable.com/appH6ML4Ix5hyPhQQ/shrQzKhqLuA531uOg',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Financé par la Région Île-de-France'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>// 13. ACTIV' CRÉA EMERGENCE</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (a.inscritFranceTravail === 'Oui' &amp;&amp; isDemandeurEmploi &amp;&amp; a.stadeProjet === 'Idée' &amp;&amp; !entrepriseCreee) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>eligible.push({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>nom: 'Activ\' Créa Émergence',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>description: 'Programme d\'accompagnement personnalisé qui permet d\'explorer la création ou reprise d\'entreprise comme opportunité/solution de retour à l\'emploi.',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>duree: 'Parcours sur environ 2 mois (6 ateliers + 3 RDV individuels)',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>contenu: ['Entretien de diagnostic', 'Parcours personnalisé', 'Entretien de bilan', 'Ateliers collectifs', 'Rendez-vous individuels'],</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>procedure: 'Contacter son conseiller France Travail OU s\'inscrire depuis son espace personnel sur https://www.francetravail.fr/accueil/',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>note: 'Aide à consolider une idée et évaluer le profil entrepreneurial'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setResults(eligible);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const handleAnswer = (questionId, value) =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setAnswers({ ...answers, [questionId]: value });</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const handleNext = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const questions = getQuestions();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (step &lt; questions.length - 1) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>setStep(step + 1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>calculateEligibility();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const handlePrevious = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (step &gt; 0) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>setStep(step - 1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const handleReset = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setStep(0);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setAnswers({});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>setResults(null);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const questions = getQuestions();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const currentQuestion = questions[step];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const isAnswered = answers[currentQuestion?.id] !== undefined &amp;&amp; answers[currentQuestion?.id] !== '' &amp;&amp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>(Array.isArray(answers[currentQuestion?.id]) ? answers[currentQuestion?.id].length &gt; 0 : true);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (results !== null) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>return (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div className="max-w-4xl mx-auto"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div className="bg-white rounded-2xl shadow-xl p-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h1 className="text-3xl font-bold text-gray-800 mb-6"&gt;Résultats de votre éligibilité&lt;/h1&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{results.length === 0 ? (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-6"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div className="flex items-start"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;AlertCircle className="text-orange-500 mt-1 mr-3 flex-shrink-0" size={24} /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;h3 className="font-semibold text-orange-800 mb-2"&gt;Aucun dispositif identifié&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p className="text-orange-700"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>Selon les informations fournies, nous n'avons pas trouvé de dispositif correspondant exactement à votre profil.<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>Nous vous recommandons de contacter directement un conseiller pour étudier votre situation plus en détail.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p className="text-orange-700 mt-3"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>&lt;strong&gt;Contactez BGE PaRIF :&lt;/strong&gt;&lt;br/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>📧 contact@bge-parif.com&lt;br/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>📞 01 43 55 09 48</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>) : (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;div className="flex items-center"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;CheckCircle className="text-green-600 mr-2" size={24} /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p className="text-green-800 font-semibold"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>Vous êtes éligible à {results.length} dispositif{results.length &gt; 1 ? 's' : ''} !</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div className="space-y-4 mb-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>{results.map((dispositif, index) =&gt; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div key={index} className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>&lt;h3 className="text-2xl font-bold text-blue-900 mb-3"&gt;{dispositif.nom}&lt;/h3&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                      </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>&lt;div className="mb-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;p className="text-gray-700 leading-relaxed"&gt;{dispositif.description}&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>{dispositif.duree &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="mb-3"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;span className="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>⏱️ {dispositif.duree}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>{dispositif.contenu &amp;&amp; dispositif.contenu.length &gt; 0 &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="mb-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;h4 className="font-semibold text-gray-800 mb-2"&gt;📋 Contenu :&lt;/h4&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;ul className="list-disc list-inside space-y-1 text-gray-600 ml-2"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>{dispositif.contenu.map((item, i) =&gt; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                              </span>&lt;li key={i}&gt;{item}&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>))}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;/ul&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>{dispositif.enSavoirPlus &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="mb-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;a<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>href={dispositif.enSavoirPlus}<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>target="_blank"<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>rel="noopener noreferrer"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>🔗 En savoir plus &lt;ExternalLink size={16} className="ml-1" /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;/a&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>{dispositif.procedure &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;h4 className="font-semibold text-green-900 mb-2"&gt;📞 Comment s'inscrire :&lt;/h4&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;div className="text-green-800"&gt;{renderClickableText(dispositif.procedure)}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>{dispositif.note &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="bg-amber-50 border border-amber-200 rounded-lg p-3"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;p className="text-amber-900 text-sm"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;strong&gt;ℹ️ Note :&lt;/strong&gt; {dispositif.note}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>)}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>))}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>onClick={handleReset}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;RotateCcw className="mr-2" size={20} /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>Recommencer le questionnaire</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div className="max-w-3xl mx-auto"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div className="bg-white rounded-2xl shadow-xl p-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h1 className="text-3xl font-bold text-gray-800 mb-2"&gt;Découvrez les dispositifs d'accompagnement faits pour vous !&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;p className="text-gray-600 mb-6"&gt;En complétant ce formulaire, vous nous aidez à identifier l'accompagnement le plus adapté à votre situation.&lt;/p&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div className="mb-6"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div className="flex justify-between text-sm text-gray-600 mb-2"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;span&gt;Question {step + 1} sur {questions.length}&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;span&gt;{Math.round(((step + 1) / questions.length) * 100)}%&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div className="w-full bg-gray-200 rounded-full h-2"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>className="bg-indigo-600 h-2 rounded-full transition-all duration-300"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>style={{ width: `${((step + 1) / questions.length) * 100}%` }}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div className="mb-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h2 className="text-xl font-semibold text-gray-800 mb-4"&gt;{currentQuestion.question}&lt;/h2&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{currentQuestion.info &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;p className="text-sm text-blue-700"&gt;💡 {currentQuestion.info}&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>{currentQuestion.id === 'qpv' &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;a<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>href="https://sig.ville.gouv.fr/"<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>target="_blank"<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>rel="noopener noreferrer"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold mt-2"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>Vérifier si vous êtes en QPV &lt;ExternalLink size={14} className="ml-1" /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;/a&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>)}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{currentQuestion.type === 'radio' &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div className="space-y-3"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>{currentQuestion.options.map((option) =&gt; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;label<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>key={option}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>style={{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>borderColor: answers[currentQuestion.id] === option ? '#4f46e5' : '#e5e7eb',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>backgroundColor: answers[currentQuestion.id] === option ? '#eef2ff' : 'white'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>}}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;input</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>type="radio"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>name={currentQuestion.id}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>value={option}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>checked={answers[currentQuestion.id] === option}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>onChange={(e) =&gt; handleAnswer(currentQuestion.id, e.target.value)}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>className="mr-3 w-5 h-5 text-indigo-600"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;span className="text-gray-700 font-medium"&gt;{option}&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>))}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{currentQuestion.type === 'checkbox' &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div className="space-y-3"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>{currentQuestion.options.map((option) =&gt; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;label<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>key={option}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>style={{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>borderColor: answers[currentQuestion.id]?.includes(option) ? '#4f46e5' : '#e5e7eb',</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>backgroundColor: answers[currentQuestion.id]?.includes(option) ? '#eef2ff' : 'white'</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>}}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;input</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>type="checkbox"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>value={option}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>checked={answers[currentQuestion.id]?.includes(option) || false}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>onChange={(e) =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>const current = answers[currentQuestion.id] || [];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>const newValue = e.target.checked</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>? [...current, option]</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                          </span>: current.filter(item =&gt; item !== option);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>handleAnswer(currentQuestion.id, newValue);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>}}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                      </span>className="mr-3 w-5 h-5 text-indigo-600 rounded"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;span className="text-gray-700 font-medium"&gt;{option}&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                  </span>&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>))}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{currentQuestion.type === 'text' &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;input</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>type="text"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>placeholder={currentQuestion.placeholder}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>value={answers[currentQuestion.id] || ''}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>onChange={(e) =&gt; handleAnswer(currentQuestion.id, e.target.value)}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>)}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{currentQuestion.type === 'number' &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;input</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>type="number"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>placeholder={currentQuestion.placeholder}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>value={answers[currentQuestion.id] || ''}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>onChange={(e) =&gt; handleAnswer(currentQuestion.id, e.target.value)}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>)}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div className="flex gap-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{step &gt; 0 &amp;&amp; (</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;button</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>onClick={handlePrevious}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>Précédent</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>)}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>onClick={handleNext}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>disabled={!isAnswered}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>{step === questions.length - 1 ? 'Voir les résultats' : 'Suivant'}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;ChevronRight className="ml-2" size={20} /&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>);</span></p>
-<p class="p1"><span class="s1">};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">export default EligibilityTool;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>//</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        // import React, { useState } from 'react';
+import { AlertCircle, CheckCircle, ChevronRight, RotateCcw, ExternalLink } from 'lucide-react';
+
+const EligibilityTool = () => {
+  // Ajout de la police Poppins
+  React.useEffect(() => {
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+    document.body.style.fontFamily = "'Poppins', sans-serif";
+    
+    return () => {
+      document.body.style.fontFamily = '';
+    };
+  }, []);
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [results, setResults] = useState(null);
+
+  // Logique conditionnelle pour déterminer les questions à afficher
+  const getQuestions = () => {
+    const baseQuestions = [
+      {
+        id: 'entrepriseCreee',
+        question: 'Avez-vous déjà créé votre entreprise ?',
+        type: 'radio',
+        options: ['Oui', 'Non']
+      }
+    ];
+
+    // Si entreprise créée
+    if (answers.entrepriseCreee === 'Oui') {
+      baseQuestions.push({
+        id: 'typeEntreprise',
+        question: 'Quel est le statut juridique de votre entreprise ?',
+        type: 'radio',
+        options: ['Micro-entreprise', 'Société (SARL, SAS, etc.)']
+      });
+      
+      baseQuestions.push({
+        id: 'ageEntreprise',
+        question: 'Depuis combien de temps existe-t-elle ?',
+        type: 'radio',
+        options: ['Moins de 3 ans', 'Plus de 3 ans']
+      });
+
+      if (answers.typeEntreprise === 'Société (SARL, SAS, etc.)') {
+        baseQuestions.push({
+          id: 'caAnnuel',
+          question: 'Quel est votre chiffre d\'affaires annuel ?',
+          type: 'radio',
+          options: ['Moins de 30 000 €', 'Plus de 30 000 €']
+        });
+      }
+    }
+
+    // Si entreprise non créée
+    if (answers.entrepriseCreee === 'Non') {
+      baseQuestions.push({
+        id: 'stadeProjet',
+        question: 'À quel stade en est votre projet ?',
+        type: 'radio',
+        options: ['Idée', 'Projet formalisé', 'Business plan finalisé']
+      });
+
+      if (answers.stadeProjet === 'Projet formalisé') {
+        baseQuestions.push({
+          id: 'projetImpact',
+          question: 'Votre projet est-il considéré comme projet à impact (social et/ou environnemental) ?',
+          type: 'radio',
+          options: ['Oui', 'Non']
+        });
+      }
+
+      if (answers.stadeProjet === 'Projet formalisé' || answers.stadeProjet === 'Business plan finalisé') {
+        baseQuestions.push({
+          id: 'activiteReglementee',
+          question: 'Votre projet concerne-t-il l\'une des activités suivantes : activité libérale réglementée ou assimilée, activités immobilières, secteur médical et médico-social, activités financières et d\'assurance, production agricole primaire, pêche, aquaculture, sylviculture ?',
+          type: 'radio',
+          options: ['Oui', 'Non']
+        });
+      }
+    }
+
+    // Questions personnelles
+    baseQuestions.push({
+      id: 'sexe',
+      question: 'Vous êtes :',
+      type: 'radio',
+      options: ['Une femme', 'Un homme']
+    });
+
+    baseQuestions.push({
+      id: 'age',
+      question: 'Quel est votre âge ?',
+      type: 'number',
+      placeholder: 'Ex: 30'
+    });
+
+    const age = parseInt(answers.age) || 0;
+    if (age >= 18 && age <= 30) {
+      baseQuestions.push({
+        id: 'missionLocale',
+        question: 'Êtes-vous inscrit(e) auprès d\'une Mission Locale ?',
+        type: 'radio',
+        options: ['Oui', 'Non']
+      });
+    }
+
+    baseQuestions.push({
+      id: 'codePostal',
+      question: 'Quel est votre code postal de résidence ?',
+      type: 'text',
+      placeholder: 'Ex: 75001'
+    });
+
+    baseQuestions.push({
+      id: 'qpv',
+      question: 'Résidez-vous en Quartier Prioritaire de la Ville (QPV) ou dans un rayon de 300 mètres autour ?',
+      type: 'radio',
+      options: ['Oui', 'Non', 'Je ne sais pas'],
+      info: 'Vous pouvez vérifier sur https://sig.ville.gouv.fr/'
+    });
+
+    // Parcours et situation
+    baseQuestions.push({
+      id: 'niveauEtude',
+      question: 'Quel est votre niveau d\'étude ?',
+      type: 'radio',
+      options: ['Inférieur au CAP/BEP', 'CAP/BEP', 'Baccalauréat', 'Bac+2 et plus']
+    });
+
+    baseQuestions.push({
+      id: 'statut',
+      question: 'Quel est votre statut actuel ?',
+      type: 'checkbox',
+      options: ['Demandeur d\'emploi', 'Salarié à temps complet', 'Salarié à temps partiel', 'Bénéficiaire RSA', 'Bénéficiaire ASS', 'Bénéficiaire AAH']
+    });
+
+    if (answers.statut?.includes('Demandeur d\'emploi')) {
+      baseQuestions.push({
+        id: 'dureeDemandeurEmploi',
+        question: 'Depuis combien de temps êtes-vous demandeur d\'emploi ?',
+        type: 'radio',
+        options: ['Moins de 12 mois', 'De 12 à 24 mois', 'Plus de 24 mois']
+      });
+    }
+
+    baseQuestions.push({
+      id: 'inscritFranceTravail',
+      question: 'Êtes-vous inscrit(e) à France Travail ?',
+      type: 'radio',
+      options: ['Oui', 'Non']
+    });
+  } else if (!isSalariePleinTemps) {
+    // Si pas salarié à temps complet mais pas demandeur d'emploi non plus
+    baseQuestions.push({
+      id: 'inscritFranceTravail',
+      question: 'Êtes-vous inscrit(e) à France Travail ?',
+      type: 'radio',
+      options: ['Oui', 'Non']
+    });
+  }
+
+    // Critères spécifiques
+    baseQuestions.push({
+      id: 'criteresSociaux',
+      question: 'Cochez toutes les situations qui vous concernent :',
+      type: 'checkbox',
+      options: [
+        'Parent isolé',
+        'Sans domicile fixe (SDF)',
+        'Récemment arrivé en France',
+        'Sortant de l\'ASE (Aide Sociale à l\'Enfance)',
+        'Résidence en ZRR (Zone de Revitalisation Rurale)',
+        'Aucun de ces critères'
+      ]
+    });
+
+    baseQuestions.push({
+      id: 'handicap',
+      question: 'Êtes-vous reconnu(e) travailleur(se) en situation de handicap (RQTH) ?',
+      type: 'radio',
+      options: ['Oui', 'Non']
+    });
+
+    if (answers.handicap === 'Oui') {
+      baseQuestions.push({
+        id: 'inscritCapEmploi',
+        question: 'Êtes-vous inscrit(e) à Cap Emploi ?',
+        type: 'radio',
+        options: ['Oui', 'Non']
+      });
+    }
+
+    baseQuestions.push({
+      id: 'sortieIAE',
+      question: 'Êtes-vous sorti(e) d\'un dispositif IAE (Insertion par l\'Activité Économique) depuis moins de 6 mois ?',
+      type: 'radio',
+      options: ['Oui', 'Non']
+    });
+
+    baseQuestions.push({
+      id: 'cpf',
+      question: 'Disposez-vous de crédits CPF (Compte Personnel de Formation) ?',
+      type: 'radio',
+      options: ['Oui', 'Non', 'Je ne sais pas'],
+      info: 'Pour le découvrir, connectez-vous à votre espace personnel sur www.moncompteformation.gouv.fr'
+    });
+
+    return baseQuestions;
+  };
+
+  // Fonction pour rendre les liens et emails cliquables
+  const renderClickableText = (text) => {
+    if (!text) return null;
+    
+    // Regex pour détecter les URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    // Regex pour détecter les emails
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
+    
+    let parts = [text];
+    
+    // Remplacer les URLs
+    parts = parts.flatMap(part => {
+      if (typeof part !== 'string') return part;
+      return part.split(urlRegex).map((segment, i) => {
+        if (urlRegex.test(segment)) {
+          return (
+            <a
+              key={`url-${i}`}
+              href={segment}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
+            >
+              {segment} <ExternalLink size={12} className="ml-1" />
+            </a>
+          );
+        }
+        return segment;
+      });
+    });
+    
+    // Remplacer les emails
+    parts = parts.flatMap(part => {
+      if (typeof part !== 'string') return part;
+      return part.split(emailRegex).map((segment, i) => {
+        if (emailRegex.test(segment)) {
+          return (
+            <a
+              key={`email-${i}`}
+              href={`mailto:${segment}`}
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              {segment}
+            </a>
+          );
+        }
+        return segment;
+      });
+    });
+    
+    return <>{parts}</>;
+  };
+
+  const calculateEligibility = () => {
+    const eligible = [];
+    const a = answers;
+
+    // Helper functions
+    const isQPV = a.qpv === 'Oui' || a.qpv === 'Je ne sais pas'; // Inclut "Je ne sais pas"
+    const isDept75 = a.codePostal?.startsWith('75');
+    const isDept93 = a.codePostal?.startsWith('93');
+    const isIDF = ['75', '77', '78', '91', '92', '93', '94', '95'].some(d => a.codePostal?.startsWith(d));
+    const entrepriseCreee = a.entrepriseCreee === 'Oui';
+    const age = parseInt(a.age) || 0;
+    const isJeune = age >= 18 && age <= 30;
+    const isSenior = age >= 50;
+    const isRSA = a.statut?.includes('Bénéficiaire RSA');
+    const isASS = a.statut?.includes('Bénéficiaire ASS');
+    const isAAH = a.statut?.includes('Bénéficiaire AAH');
+    const isDemandeurEmploi = a.statut?.includes('Demandeur d\'emploi');
+    const isSalariePleinTemps = a.statut?.includes('Salarié à temps complet');
+    const isDETLD = a.dureeDemandeurEmploi === 'Plus de 24 mois';
+    const isDELD = a.dureeDemandeurEmploi === 'De 12 à 24 mois';
+    const niveauEtudeInferieur = ['Inférieur au CAP/BEP', 'CAP/BEP'].includes(a.niveauEtude);
+
+    // Codes postaux Incubatest
+    const codesPostIncubatest = ['95400', '95500', '95720', '95380', '77410', '77290', '77230', '95440', '95190', '95470', '95140', '77990', '95670', '77280', '95700', '95200', '77270', '91120', '91140', '91160', '91190', '91300', '91310', '91320', '91360', '91370', '91400', '91430', '91440', '91460', '91620', '91940', '91800', '91860', '91560', '91210', '91480', '91270', '91330', '75001', '75002', '75003', '75004', '75005', '75006', '75007', '75008', '75009', '75010', '75011', '75012', '75013', '75014', '75015', '75016', '75017', '75018', '75019', '75020'];
+    const isVilleIncubatest = codesPostIncubatest.includes(a.codePostal);
+
+    // 1. ACCÉLÉRATEUR EMERGENCE
+    if (!entrepriseCreee && 
+        (a.stadeProjet === 'Idée' || a.stadeProjet === 'Projet formalisé') && 
+        isQPV && 
+        !isSalariePleinTemps) {
+      eligible.push({
+        nom: 'Accélérateur Émergence',
+        description: 'Programme d\'accompagnement intensif destiné aux porteurs de projet au stade de l\'idée ou du projet, visant à structurer, valider et lancer une activité entrepreneuriale en un temps record.',
+        duree: 'Environ 200 heures sur 6 mois',
+        contenu: ['Plus de 100 heures de formation', 'Accompagnement individuel', 'Ateliers collectifs', 'Sessions de mise en réseau'],
+        enSavoirPlus: 'https://emergence.bge-parif.com',
+        procedure: 'Prendre contact avec l\'équipe Accélérateurs de BGE PaRIF par email : accelerateurs@bge-parif.com',
+        note: 'Dispositif sélectif - Une sélection est effectuée après étude du dossier'
+      });
+    }
+
+    // 2. ACCÉLÉRATEUR CRÉATION INDIVIDUELLE
+    if (entrepriseCreee && isQPV) {
+      const ageOk = a.ageEntreprise === 'Moins de 3 ans';
+      const caOk = a.typeEntreprise === 'Micro-entreprise' || a.caAnnuel === 'Moins de 30 000 €';
+      if (ageOk && caOk) {
+        eligible.push({
+          nom: 'Accélérateur Création Individuelle',
+          description: 'Programme sur-mesure pour les entrepreneurs en phase de croissance ou de développement qui souhaitent structurer leur activité et augmenter considérablement leur chiffre d\'affaires.',
+          duree: 'Environ 250 heures sur 12 mois',
+          contenu: ['Plus de 100 heures de formation', 'Accompagnement individuel', 'Ateliers collectifs', 'Sessions de mise en réseau'],
+          enSavoirPlus: 'https://creation-individuelle.bge-parif.com/',
+          procedure: 'Prendre contact avec l\'équipe Accélérateurs de BGE PaRIF par email : accelerateurs@bge-parif.com',
+          note: 'Dispositif sélectif - Une sélection est effectuée après étude du dossier'
+        });
+      }
+    }
+
+    // 3. FORMATIONS CERTIFIANTES
+    if (a.cpf === 'Oui' || a.cpf === 'Je ne sais pas') {
+      eligible.push({
+        nom: 'Formations Certifiantes',
+        description: 'Formations certifiantes destinées aux créateurs, dirigeants ou repreneurs d\'entreprise afin de développer des compétences entrepreneuriales clés.',
+        duree: 'Variable selon la formation (de 14h à 95h)',
+        contenu: [
+          'CCPE (Construire et Conduire un Projet Entrepreneurial) - 95h : Formation complète pour étudier la faisabilité d\'un projet de création ou reprise en acquérant une méthodologie de conduite de projet',
+          'DVRS (Développez la visibilité sur les réseaux sociaux) - 14h : Apprenez à créer un profil, développer des communautés et gérer votre e-réputation sur les réseaux sociaux',
+          'Piloter sa micro-entreprise - 21h : Acquérir les compétences pour la gestion et le développement d\'une micro-entreprise (imposition, cotisations, comptabilité, pilotage)'
+        ],
+        procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/ OU prendre RDV : https://calendly.com/bgeparif/conseil-formation-entrepreneurial-1',
+        note: a.cpf === 'Je ne sais pas' 
+          ? 'Ces formations sont finançables par vos crédits CPF. Pour connaître votre solde CPF, connectez-vous sur www.moncompteformation.gouv.fr' 
+          : 'Formations finançables par vos crédits CPF'
+      });
+    }
+
+    // 4. GÉNÉRATEUR À IMPACT
+    if (!entrepriseCreee && 
+        a.stadeProjet === 'Projet formalisé' && 
+        a.projetImpact === 'Oui' && 
+        isDept75) {
+      eligible.push({
+        nom: 'Générateur à Impact',
+        description: 'Dispositif d\'accompagnement qui permet de confronter vos idées avec des experts, d\'évaluer toutes les options pour entreprendre autrement et de structurer votre modèle économique et stratégie.',
+        duree: 'Environ 28 heures (ateliers tous les 15 jours + RDV individuels)',
+        contenu: ['Ateliers collectifs thématiques orientés impact', 'Rendez-vous individuels avec expert', 'Construction du business model', 'Élaboration d\'un plan d\'action et pitch-deck'],
+        enSavoirPlus: 'https://www.bge-parif.com/structurer-votre-projet/incubateur-parisien-le-generateur-a-impact/',
+        procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/',
+        note: 'Réservé aux projets à impact dans le département 75'
+      });
+    }
+
+    // 5. INCUBATEST
+    if (!entrepriseCreee && 
+        (a.stadeProjet === 'Projet formalisé' || a.stadeProjet === 'Business plan finalisé') && 
+        isVilleIncubatest &&
+        a.activiteReglementee === 'Non' &&
+        !isSalariePleinTemps) {
+      eligible.push({
+        nom: 'Incubatest',
+        description: 'Les couveuses IncubaTest permettent de tester une activité entrepreneuriale dans un cadre sécurisé, avec le statut d\'entrepreneur à l\'essai.',
+        duree: 'Période de test de 6 à 8 mois (15h de RDV individuels + 6 jours de formations)',
+        contenu: ['Rendez-vous individuels', 'Ateliers et formations opérationnelles', 'Appui au développement commercial', 'Communication et gestion'],
+        enSavoirPlus: 'https://www.bge-parif.com/tester-votre-activite-en-couveuse-incubatest/',
+        procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/',
+        note: 'Sous réserve que l\'activité soit éligible. Exclu pour activités réglementées'
+      });
+    }
+
+    // 6. CRÉER SA RÉUSSITE
+    if (!entrepriseCreee) {
+      let criteresN2 = 0;
+      
+      if (niveauEtudeInferieur) criteresN2++;
+      if (isSenior) criteresN2++;
+      if (isDELD) criteresN2++;
+      if (isQPV || a.criteresSociaux?.includes('Résidence en ZRR (Zone de Revitalisation Rurale)')) criteresN2++;
+      if (a.criteresSociaux?.includes('Sans domicile fixe (SDF)')) criteresN2++;
+      if (a.criteresSociaux?.includes('Parent isolé')) criteresN2++;
+      if (a.criteresSociaux?.includes('Récemment arrivé en France')) criteresN2++;
+
+      const porte1 = (isRSA || isASS || isAAH) || isDETLD;
+      const porte2 = criteresN2 >= 3;
+      const porte3 = isJeune && (a.missionLocale === 'Oui' || a.criteresSociaux?.includes('Sortant de l\'ASE (Aide Sociale à l\'Enfance)') || criteresN2 >= 1);
+      const porte4 = a.handicap === 'Oui' && (a.inscritCapEmploi === 'Oui' || criteresN2 >= 1);
+      const porte5 = a.sortieIAE === 'Oui';
+
+      if (porte1 || porte2 || porte3 || porte4 || porte5) {
+        eligible.push({
+          nom: 'Créer Sa Réussite',
+          description: 'Programme d\'accompagnement personnalisé visant à améliorer l\'accès à la création ou à la reprise d\'entreprise, en adaptant le parcours aux besoins du bénéficiaire.',
+          duree: 'Jusqu\'à 10h d\'accompagnement individuel ou collectif',
+          contenu: ['Entretiens individuels', 'Ateliers collectifs', 'Complément ou prolongation d\'un parcours existant'],
+          enSavoirPlus: 'https://www.bge-parif.com/structurer-votre-projet/creer-sa-reussite/',
+          procedure: 'Contacter BGE PaRIF par email (contact@bge-parif.com) ou téléphone (01 43 55 09 48)',
+          note: 'Programme adapté aux publics prioritaires'
+        });
+      }
+    }
+
+    // 7. PDI 75
+    if ((isRSA || isASS) && isDETLD && isDept75 && !entrepriseCreee) {
+      eligible.push({
+        nom: 'PDI 75',
+        description: 'Programme départemental d\'insertion visant à faciliter l\'accès à l\'emploi et à la création d\'entreprise pour les bénéficiaires du dispositif.',
+        duree: 'Entre 7 à 8 heures d\'accompagnement individuel',
+        contenu: ['Accompagnement individuel par un conseiller expert en création d\'entreprise'],
+        procedure: 'Se rapprocher de son conseiller insertion ou France Travail, OU contacter BGE PaRIF (contact@bge-parif.com / 01 43 55 09 48)',
+        note: 'Réservé aux bénéficiaires RSA/ASS en DETLD dans le 75'
+      });
+    }
+
+    // 8. PDI 93
+    if ((isRSA || isASS) && isDETLD && isDept93 && !entrepriseCreee) {
+      eligible.push({
+        nom: 'PDI 93',
+        description: 'Programme départemental d\'insertion visant à faciliter l\'accès à l\'emploi et à la création d\'entreprise pour les bénéficiaires du dispositif.',
+        duree: 'Entre 7 à 8 heures d\'accompagnement individuel',
+        contenu: ['Accompagnement individuel par un conseiller expert en création d\'entreprise'],
+        procedure: 'Se rapprocher de son conseiller insertion ou France Travail, OU contacter BGE PaRIF (contact@bge-parif.com / 01 43 55 09 48)',
+        note: 'Réservé aux bénéficiaires RSA/ASS en DETLD dans le 93'
+      });
+    }
+
+    // 9. ACCOMPAGNEMENT RENFORCÉ
+    if (!entrepriseCreee && 
+        (a.stadeProjet === 'Projet formalisé' || a.stadeProjet === 'Business plan finalisé') && 
+        isQPV) {
+      eligible.push({
+        nom: 'Accompagnement Renforcé',
+        description: 'Dispositif visant à proposer un soutien intensif aux porteurs de projet ou entrepreneurs issus ou implantés dans des quartiers prioritaires (QPV) ou zones équivalentes.',
+        duree: 'Parcours de 10 heures en individuel ou collectif',
+        contenu: ['Accompagnement individualisé renforcé', 'Élaboration du plan d\'action', 'Stratégie commerciale, business plan, choix juridique', 'Gestion d\'entreprise et outils de financement'],
+        procedure: 'Contacter BGE PaRIF par email (contact@bge-parif.com) ou téléphone (01 43 55 09 48)',
+        note: 'Réservé aux projets formalisés en QPV'
+      });
+    }
+
+    // 10. AGEFIPH
+    if (a.handicap === 'Oui' && !entrepriseCreee && a.stadeProjet !== 'Idée') {
+      eligible.push({
+        nom: 'AGEFIPH',
+        description: 'Accompagnement favorisant la création d\'entreprise et l\'insertion professionnelle des personnes en situation de handicap dans les entreprises.',
+        duree: 'Phase ante-création : jusqu\'à 25h / Phase post-création : jusqu\'à 15h sur 3 ans',
+        contenu: ['Accompagnement sur-mesure', 'Montage du projet', 'Démarrage de l\'activité sur 3 ans', 'Suivi post-création'],
+        procedure: 'Se rapprocher de son conseiller Cap Emploi OU de France Travail en exprimant sa volonté de bénéficier du dispositif AGEFIPH',
+        note: 'Reconnaissance RQTH obligatoire'
+      });
+    }
+
+    // 11. PASS ENTREPRENEUR #LEADER 1
+    const exclusLeader1 = (a.sexe === 'Un homme' && isSalariePleinTemps && age > 30);
+    const activiteExclueLeader = a.activiteReglementee === 'Oui';
+    
+    if (age >= 18 && isIDF && a.stadeProjet !== 'Idée' && !entrepriseCreee && !exclusLeader1 && !activiteExclueLeader) {
+      eligible.push({
+        nom: 'Pass Entrepreneur #Leader 1',
+        description: 'Dispositif d\'accompagnement individuel destiné aux porteurs de projet en phase de création.',
+        duree: 'Entre 3 et 7 heures selon votre profil',
+        contenu: ['Élaboration d\'un plan d\'action structuré', 'Définition de la stratégie commerciale et business plan', 'Choix du statut juridique, fiscal et social', 'Fondamentaux de la gestion d\'entreprise', 'Solutions de financement'],
+        procedure: 'Compléter le formulaire en ligne : https://airtable.com/appH6ML4Ix5hyPhQQ/shrYF8iz0OnKJMYlC',
+        note: 'Financé par la Région Île-de-France'
+      });
+    }
+
+    // 12. PASS ENTREPRENEUR #LEADER 3
+    if (entrepriseCreee && isIDF && a.ageEntreprise === 'Moins de 3 ans' && !activiteExclueLeader) {
+      eligible.push({
+        nom: 'Pass Entrepreneur #Leader 3',
+        description: 'Dispositif d\'accompagnement individuel destiné aux dirigeants d\'entreprise en phase de développement.',
+        duree: 'Entre 3 et 7 heures selon votre profil',
+        contenu: ['Pilotage efficace de l\'entreprise', 'Mise en œuvre de l\'action commerciale', 'Développement du réseau et opportunités d\'affaires', 'Maîtrise des processus de recrutement', 'Sécurisation du développement'],
+        procedure: 'Compléter le formulaire en ligne : https://airtable.com/appH6ML4Ix5hyPhQQ/shrQzKhqLuA531uOg',
+        note: 'Financé par la Région Île-de-France'
+      });
+    }
+
+    // 13. ACTIV' CRÉA EMERGENCE
+    if (a.inscritFranceTravail === 'Oui' && isDemandeurEmploi && a.stadeProjet === 'Idée' && !entrepriseCreee) {
+      eligible.push({
+        nom: 'Activ\' Créa Émergence',
+        description: 'Programme d\'accompagnement personnalisé qui permet d\'explorer la création ou reprise d\'entreprise comme opportunité/solution de retour à l\'emploi.',
+        duree: 'Parcours sur environ 2 mois (6 ateliers + 3 RDV individuels)',
+        contenu: ['Entretien de diagnostic', 'Parcours personnalisé', 'Entretien de bilan', 'Ateliers collectifs', 'Rendez-vous individuels'],
+        procedure: 'Contacter son conseiller France Travail OU s\'inscrire depuis son espace personnel sur https://www.francetravail.fr/accueil/',
+        note: 'Aide à consolider une idée et évaluer le profil entrepreneurial'
+      });
+    }
+
+    setResults(eligible);
+  };
+
+  const handleAnswer = (questionId, value) => {
+    setAnswers({ ...answers, [questionId]: value });
+  };
+
+  const handleNext = () => {
+    const questions = getQuestions();
+    if (step < questions.length - 1) {
+      setStep(step + 1);
+    } else {
+      calculateEligibility();
+    }
+  };
+
+  const handlePrevious = () => {
+    if (step > 0) {
+      setStep(step - 1);
+    }
+  };
+
+  const handleReset = () => {
+    setStep(0);
+    setAnswers({});
+    setResults(null);
+  };
+
+  const questions = getQuestions();
+  const currentQuestion = questions[step];
+  const isAnswered = answers[currentQuestion?.id] !== undefined && answers[currentQuestion?.id] !== '' && 
+                      (Array.isArray(answers[currentQuestion?.id]) ? answers[currentQuestion?.id].length > 0 : true);
+
+  if (results !== null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Résultats de votre éligibilité</h1>
+            
+            {results.length === 0 ? (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-6">
+                <div className="flex items-start">
+                  <AlertCircle className="text-orange-500 mt-1 mr-3 flex-shrink-0" size={24} />
+                  <div>
+                    <h3 className="font-semibold text-orange-800 mb-2">Aucun dispositif identifié</h3>
+                    <p className="text-orange-700">
+                      Selon les informations fournies, nous n'avons pas trouvé de dispositif correspondant exactement à votre profil. 
+                      Nous vous recommandons de contacter directement un conseiller pour étudier votre situation plus en détail.
+                    </p>
+                    <p className="text-orange-700 mt-3">
+                      <strong>Contactez BGE PaRIF :</strong><br/>
+                      📧 contact@bge-parif.com<br/>
+                      📞 01 43 55 09 48
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center">
+                    <CheckCircle className="text-green-600 mr-2" size={24} />
+                    <p className="text-green-800 font-semibold">
+                      Vous êtes éligible à {results.length} dispositif{results.length > 1 ? 's' : ''} !
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 mb-8">
+                  {results.map((dispositif, index) => (
+                    <div key={index} className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">
+                      <h3 className="text-2xl font-bold text-blue-900 mb-3">{dispositif.nom}</h3>
+                      
+                      <div className="mb-4">
+                        <p className="text-gray-700 leading-relaxed">{dispositif.description}</p>
+                      </div>
+
+                      {dispositif.duree && (
+                        <div className="mb-3">
+                          <span className="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">
+                            ⏱️ {dispositif.duree}
+                          </span>
+                        </div>
+                      )}
+
+                      {dispositif.contenu && dispositif.contenu.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="font-semibold text-gray-800 mb-2">📋 Contenu :</h4>
+                          <ul className="list-disc list-inside space-y-1 text-gray-600 ml-2">
+                            {dispositif.contenu.map((item, i) => (
+                              <li key={i}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {dispositif.enSavoirPlus && (
+                        <div className="mb-4">
+                          <a 
+                            href={dispositif.enSavoirPlus} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
+                          >
+                            🔗 En savoir plus <ExternalLink size={16} className="ml-1" />
+                          </a>
+                        </div>
+                      )}
+
+                      {dispositif.procedure && (
+                        <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                          <h4 className="font-semibold text-green-900 mb-2">📞 Comment s'inscrire :</h4>
+                          <div className="text-green-800">{renderClickableText(dispositif.procedure)}</div>
+                        </div>
+                      )}
+
+                      {dispositif.note && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                          <p className="text-amber-900 text-sm">
+                            <strong>ℹ️ Note :</strong> {dispositif.note}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <button
+              onClick={handleReset}
+              className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center"
+            >
+              <RotateCcw className="mr-2" size={20} />
+              Recommencer le questionnaire
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Découvrez les dispositifs d'accompagnement faits pour vous !</h1>
+          <p className="text-gray-600 mb-6">En complétant ce formulaire, vous nous aidez à identifier l'accompagnement le plus adapté à votre situation.</p>
+          
+          <div className="mb-6">
+            <div className="flex justify-between text-sm text-gray-600 mb-2">
+              <span>Question {step + 1} sur {questions.length}</span>
+              <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${((step + 1) / questions.length) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">{currentQuestion.question}</h2>
+            
+            {currentQuestion.info && (
+              <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-700">💡 {currentQuestion.info}</p>
+                {currentQuestion.id === 'qpv' && (
+                  <a 
+                    href="https://sig.ville.gouv.fr/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold mt-2"
+                  >
+                    Vérifier si vous êtes en QPV <ExternalLink size={14} className="ml-1" />
+                  </a>
+                )}
+              </div>
+            )}
+
+            {currentQuestion.type === 'radio' && (
+              <div className="space-y-3">
+                {currentQuestion.options.map((option) => (
+                  <label 
+                    key={option}
+                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                    style={{
+                      borderColor: answers[currentQuestion.id] === option ? '#4f46e5' : '#e5e7eb',
+                      backgroundColor: answers[currentQuestion.id] === option ? '#eef2ff' : 'white'
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name={currentQuestion.id}
+                      value={option}
+                      checked={answers[currentQuestion.id] === option}
+                      onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                      className="mr-3 w-5 h-5 text-indigo-600"
+                    />
+                    <span className="text-gray-700 font-medium">{option}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {currentQuestion.type === 'checkbox' && (
+              <div className="space-y-3">
+                {currentQuestion.options.map((option) => (
+                  <label 
+                    key={option}
+                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                    style={{
+                      borderColor: answers[currentQuestion.id]?.includes(option) ? '#4f46e5' : '#e5e7eb',
+                      backgroundColor: answers[currentQuestion.id]?.includes(option) ? '#eef2ff' : 'white'
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      value={option}
+                      checked={answers[currentQuestion.id]?.includes(option) || false}
+                      onChange={(e) => {
+                        const current = answers[currentQuestion.id] || [];
+                        const newValue = e.target.checked
+                          ? [...current, option]
+                          : current.filter(item => item !== option);
+                        handleAnswer(currentQuestion.id, newValue);
+                      }}
+                      className="mr-3 w-5 h-5 text-indigo-600 rounded"
+                    />
+                    <span className="text-gray-700 font-medium">{option}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {currentQuestion.type === 'text' && (
+              <input
+                type="text"
+                placeholder={currentQuestion.placeholder}
+                value={answers[currentQuestion.id] || ''}
+                onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"
+              />
+            )}
+
+            {currentQuestion.type === 'number' && (
+              <input
+                type="number"
+                placeholder={currentQuestion.placeholder}
+                value={answers[currentQuestion.id] || ''}
+                onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"
+              />
+            )}
+          </div>
+
+          <div className="flex gap-4">
+            {step > 0 && (
+              <button
+                onClick={handlePrevious}
+                className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+              >
+                Précédent
+              </button>
+            )}
+            <button
+              onClick={handleNext}
+              disabled={!isAnswered}
+              className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              {step === questions.length - 1 ? 'Voir les résultats' : 'Suivant'}
+              <ChevronRight className="ml-2" size={20} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EligibilityTool;
+        //
+    </script>
 </body>
 </html>
