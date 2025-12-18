@@ -1,806 +1,852 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outil d'Éligibilité - BGE PaRIF</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Outil d'Éligibilité - BGE PaRIF</title>
+
+  <!-- React (global) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel (pour JSX dans un fichier HTML) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Police -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+  </style>
 </head>
+
 <body>
-    <div id="root"></div>
-    
-    <script type="text/babel">
-        // import React, { useState } from 'react';
-import { AlertCircle, CheckCircle, ChevronRight, RotateCcw, ExternalLink } from 'lucide-react';
+  <div id="root"></div>
 
-const EligibilityTool = () => {
-  // Ajout de la police Poppins
-  React.useEffect(() => {
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-    document.body.style.fontFamily = "'Poppins', sans-serif";
-    
-    return () => {
-      document.body.style.fontFamily = '';
-    };
-  }, []);
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [results, setResults] = useState(null);
+  <script type="text/babel">
+    const { useState, useMemo } = React;
 
-  // Logique conditionnelle pour déterminer les questions à afficher
-  const getQuestions = () => {
-    const baseQuestions = [
-      {
-        id: 'entrepriseCreee',
-        question: 'Avez-vous déjà créé votre entreprise ?',
-        type: 'radio',
-        options: ['Oui', 'Non']
-      }
-    ];
+    // Petit helper: rend URLs + emails cliquables dans un texte
+    function ClickableText({ text }) {
+      if (!text) return null;
 
-    // Si entreprise créée
-    if (answers.entrepriseCreee === 'Oui') {
-      baseQuestions.push({
-        id: 'typeEntreprise',
-        question: 'Quel est le statut juridique de votre entreprise ?',
-        type: 'radio',
-        options: ['Micro-entreprise', 'Société (SARL, SAS, etc.)']
-      });
-      
-      baseQuestions.push({
-        id: 'ageEntreprise',
-        question: 'Depuis combien de temps existe-t-elle ?',
-        type: 'radio',
-        options: ['Moins de 3 ans', 'Plus de 3 ans']
-      });
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
 
-      if (answers.typeEntreprise === 'Société (SARL, SAS, etc.)') {
-        baseQuestions.push({
-          id: 'caAnnuel',
-          question: 'Quel est votre chiffre d\'affaires annuel ?',
-          type: 'radio',
-          options: ['Moins de 30 000 €', 'Plus de 30 000 €']
+      let parts = [text];
+
+      // URLs
+      parts = parts.flatMap((part) => {
+        if (typeof part !== "string") return part;
+        return part.split(urlRegex).map((seg, i) => {
+          if (urlRegex.test(seg)) {
+            return (
+              <a
+                key={"url-" + i}
+                href={seg}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
+              >
+                {seg} <span className="ml-1">↗</span>
+              </a>
+            );
+          }
+          return seg;
         });
-      }
-    }
-
-    // Si entreprise non créée
-    if (answers.entrepriseCreee === 'Non') {
-      baseQuestions.push({
-        id: 'stadeProjet',
-        question: 'À quel stade en est votre projet ?',
-        type: 'radio',
-        options: ['Idée', 'Projet formalisé', 'Business plan finalisé']
       });
 
-      if (answers.stadeProjet === 'Projet formalisé') {
-        baseQuestions.push({
-          id: 'projetImpact',
-          question: 'Votre projet est-il considéré comme projet à impact (social et/ou environnemental) ?',
-          type: 'radio',
-          options: ['Oui', 'Non']
+      // Emails
+      parts = parts.flatMap((part) => {
+        if (typeof part !== "string") return part;
+        return part.split(emailRegex).map((seg, i) => {
+          if (emailRegex.test(seg)) {
+            return (
+              <a
+                key={"email-" + i}
+                href={"mailto:" + seg}
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                {seg}
+              </a>
+            );
+          }
+          return seg;
         });
-      }
+      });
 
-      if (answers.stadeProjet === 'Projet formalisé' || answers.stadeProjet === 'Business plan finalisé') {
-        baseQuestions.push({
-          id: 'activiteReglementee',
-          question: 'Votre projet concerne-t-il l\'une des activités suivantes : activité libérale réglementée ou assimilée, activités immobilières, secteur médical et médico-social, activités financières et d\'assurance, production agricole primaire, pêche, aquaculture, sylviculture ?',
-          type: 'radio',
-          options: ['Oui', 'Non']
+      return <>{parts}</>;
+    }
+
+    function EligibilityTool() {
+      const [step, setStep] = useState(0);
+      const [answers, setAnswers] = useState({});
+      const [results, setResults] = useState(null);
+
+      const getQuestions = () => {
+        const q = [];
+
+        // 1) Projet / entreprise
+        q.push({
+          id: "entrepriseCreee",
+          question: "Avez-vous déjà créé votre entreprise ?",
+          type: "radio",
+          options: ["Oui", "Non"],
         });
-      }
-    }
 
-    // Questions personnelles
-    baseQuestions.push({
-      id: 'sexe',
-      question: 'Vous êtes :',
-      type: 'radio',
-      options: ['Une femme', 'Un homme']
-    });
+        if (answers.entrepriseCreee === "Oui") {
+          q.push({
+            id: "typeEntreprise",
+            question: "Quel est le statut juridique de votre entreprise ?",
+            type: "radio",
+            options: ["Micro-entreprise", "Société (SARL, SAS, etc.)"],
+          });
 
-    baseQuestions.push({
-      id: 'age',
-      question: 'Quel est votre âge ?',
-      type: 'number',
-      placeholder: 'Ex: 30'
-    });
+          q.push({
+            id: "ageEntreprise",
+            question: "Depuis combien de temps existe-t-elle ?",
+            type: "radio",
+            options: ["Moins de 3 ans", "Plus de 3 ans"],
+          });
 
-    const age = parseInt(answers.age) || 0;
-    if (age >= 18 && age <= 30) {
-      baseQuestions.push({
-        id: 'missionLocale',
-        question: 'Êtes-vous inscrit(e) auprès d\'une Mission Locale ?',
-        type: 'radio',
-        options: ['Oui', 'Non']
-      });
-    }
-
-    baseQuestions.push({
-      id: 'codePostal',
-      question: 'Quel est votre code postal de résidence ?',
-      type: 'text',
-      placeholder: 'Ex: 75001'
-    });
-
-    baseQuestions.push({
-      id: 'qpv',
-      question: 'Résidez-vous en Quartier Prioritaire de la Ville (QPV) ou dans un rayon de 300 mètres autour ?',
-      type: 'radio',
-      options: ['Oui', 'Non', 'Je ne sais pas'],
-      info: 'Vous pouvez vérifier sur https://sig.ville.gouv.fr/'
-    });
-
-    // Parcours et situation
-    baseQuestions.push({
-      id: 'niveauEtude',
-      question: 'Quel est votre niveau d\'étude ?',
-      type: 'radio',
-      options: ['Inférieur au CAP/BEP', 'CAP/BEP', 'Baccalauréat', 'Bac+2 et plus']
-    });
-
-    baseQuestions.push({
-      id: 'statut',
-      question: 'Quel est votre statut actuel ?',
-      type: 'checkbox',
-      options: ['Demandeur d\'emploi', 'Salarié à temps complet', 'Salarié à temps partiel', 'Bénéficiaire RSA', 'Bénéficiaire ASS', 'Bénéficiaire AAH']
-    });
-
-    if (answers.statut?.includes('Demandeur d\'emploi')) {
-      baseQuestions.push({
-        id: 'dureeDemandeurEmploi',
-        question: 'Depuis combien de temps êtes-vous demandeur d\'emploi ?',
-        type: 'radio',
-        options: ['Moins de 12 mois', 'De 12 à 24 mois', 'Plus de 24 mois']
-      });
-    }
-
-    baseQuestions.push({
-      id: 'inscritFranceTravail',
-      question: 'Êtes-vous inscrit(e) à France Travail ?',
-      type: 'radio',
-      options: ['Oui', 'Non']
-    });
-  } else if (!isSalariePleinTemps) {
-    // Si pas salarié à temps complet mais pas demandeur d'emploi non plus
-    baseQuestions.push({
-      id: 'inscritFranceTravail',
-      question: 'Êtes-vous inscrit(e) à France Travail ?',
-      type: 'radio',
-      options: ['Oui', 'Non']
-    });
-  }
-
-    // Critères spécifiques
-    baseQuestions.push({
-      id: 'criteresSociaux',
-      question: 'Cochez toutes les situations qui vous concernent :',
-      type: 'checkbox',
-      options: [
-        'Parent isolé',
-        'Sans domicile fixe (SDF)',
-        'Récemment arrivé en France',
-        'Sortant de l\'ASE (Aide Sociale à l\'Enfance)',
-        'Résidence en ZRR (Zone de Revitalisation Rurale)',
-        'Aucun de ces critères'
-      ]
-    });
-
-    baseQuestions.push({
-      id: 'handicap',
-      question: 'Êtes-vous reconnu(e) travailleur(se) en situation de handicap (RQTH) ?',
-      type: 'radio',
-      options: ['Oui', 'Non']
-    });
-
-    if (answers.handicap === 'Oui') {
-      baseQuestions.push({
-        id: 'inscritCapEmploi',
-        question: 'Êtes-vous inscrit(e) à Cap Emploi ?',
-        type: 'radio',
-        options: ['Oui', 'Non']
-      });
-    }
-
-    baseQuestions.push({
-      id: 'sortieIAE',
-      question: 'Êtes-vous sorti(e) d\'un dispositif IAE (Insertion par l\'Activité Économique) depuis moins de 6 mois ?',
-      type: 'radio',
-      options: ['Oui', 'Non']
-    });
-
-    baseQuestions.push({
-      id: 'cpf',
-      question: 'Disposez-vous de crédits CPF (Compte Personnel de Formation) ?',
-      type: 'radio',
-      options: ['Oui', 'Non', 'Je ne sais pas'],
-      info: 'Pour le découvrir, connectez-vous à votre espace personnel sur www.moncompteformation.gouv.fr'
-    });
-
-    return baseQuestions;
-  };
-
-  // Fonction pour rendre les liens et emails cliquables
-  const renderClickableText = (text) => {
-    if (!text) return null;
-    
-    // Regex pour détecter les URLs
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    // Regex pour détecter les emails
-    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
-    
-    let parts = [text];
-    
-    // Remplacer les URLs
-    parts = parts.flatMap(part => {
-      if (typeof part !== 'string') return part;
-      return part.split(urlRegex).map((segment, i) => {
-        if (urlRegex.test(segment)) {
-          return (
-            <a
-              key={`url-${i}`}
-              href={segment}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
-            >
-              {segment} <ExternalLink size={12} className="ml-1" />
-            </a>
-          );
+          if (answers.typeEntreprise === "Société (SARL, SAS, etc.)") {
+            q.push({
+              id: "caAnnuel",
+              question: "Quel est votre chiffre d'affaires annuel ?",
+              type: "radio",
+              options: ["Moins de 30 000 €", "Plus de 30 000 €"],
+            });
+          }
         }
-        return segment;
-      });
-    });
-    
-    // Remplacer les emails
-    parts = parts.flatMap(part => {
-      if (typeof part !== 'string') return part;
-      return part.split(emailRegex).map((segment, i) => {
-        if (emailRegex.test(segment)) {
-          return (
-            <a
-              key={`email-${i}`}
-              href={`mailto:${segment}`}
-              className="text-blue-600 hover:text-blue-800 underline"
-            >
-              {segment}
-            </a>
-          );
+
+        if (answers.entrepriseCreee === "Non") {
+          q.push({
+            id: "stadeProjet",
+            question: "À quel stade en est votre projet ?",
+            type: "radio",
+            options: ["Idée", "Projet formalisé", "Business plan finalisé"],
+          });
+
+          if (answers.stadeProjet === "Projet formalisé") {
+            q.push({
+              id: "projetImpact",
+              question:
+                "Votre projet est-il considéré comme projet à impact (social et/ou environnemental) ?",
+              type: "radio",
+              options: ["Oui", "Non"],
+            });
+          }
+
+          if (
+            answers.stadeProjet === "Projet formalisé" ||
+            answers.stadeProjet === "Business plan finalisé"
+          ) {
+            q.push({
+              id: "activiteReglementee",
+              question:
+                "Votre projet concerne-t-il l'une des activités suivantes : activité libérale réglementée ou assimilée, activités immobilières, secteur médical et médico-social, activités financières et d'assurance, production agricole primaire, pêche, aquaculture, sylviculture ?",
+              type: "radio",
+              options: ["Oui", "Non"],
+            });
+          }
         }
-        return segment;
-      });
-    });
-    
-    return <>{parts}</>;
-  };
 
-  const calculateEligibility = () => {
-    const eligible = [];
-    const a = answers;
-
-    // Helper functions
-    const isQPV = a.qpv === 'Oui' || a.qpv === 'Je ne sais pas'; // Inclut "Je ne sais pas"
-    const isDept75 = a.codePostal?.startsWith('75');
-    const isDept93 = a.codePostal?.startsWith('93');
-    const isIDF = ['75', '77', '78', '91', '92', '93', '94', '95'].some(d => a.codePostal?.startsWith(d));
-    const entrepriseCreee = a.entrepriseCreee === 'Oui';
-    const age = parseInt(a.age) || 0;
-    const isJeune = age >= 18 && age <= 30;
-    const isSenior = age >= 50;
-    const isRSA = a.statut?.includes('Bénéficiaire RSA');
-    const isASS = a.statut?.includes('Bénéficiaire ASS');
-    const isAAH = a.statut?.includes('Bénéficiaire AAH');
-    const isDemandeurEmploi = a.statut?.includes('Demandeur d\'emploi');
-    const isSalariePleinTemps = a.statut?.includes('Salarié à temps complet');
-    const isDETLD = a.dureeDemandeurEmploi === 'Plus de 24 mois';
-    const isDELD = a.dureeDemandeurEmploi === 'De 12 à 24 mois';
-    const niveauEtudeInferieur = ['Inférieur au CAP/BEP', 'CAP/BEP'].includes(a.niveauEtude);
-
-    // Codes postaux Incubatest
-    const codesPostIncubatest = ['95400', '95500', '95720', '95380', '77410', '77290', '77230', '95440', '95190', '95470', '95140', '77990', '95670', '77280', '95700', '95200', '77270', '91120', '91140', '91160', '91190', '91300', '91310', '91320', '91360', '91370', '91400', '91430', '91440', '91460', '91620', '91940', '91800', '91860', '91560', '91210', '91480', '91270', '91330', '75001', '75002', '75003', '75004', '75005', '75006', '75007', '75008', '75009', '75010', '75011', '75012', '75013', '75014', '75015', '75016', '75017', '75018', '75019', '75020'];
-    const isVilleIncubatest = codesPostIncubatest.includes(a.codePostal);
-
-    // 1. ACCÉLÉRATEUR EMERGENCE
-    if (!entrepriseCreee && 
-        (a.stadeProjet === 'Idée' || a.stadeProjet === 'Projet formalisé') && 
-        isQPV && 
-        !isSalariePleinTemps) {
-      eligible.push({
-        nom: 'Accélérateur Émergence',
-        description: 'Programme d\'accompagnement intensif destiné aux porteurs de projet au stade de l\'idée ou du projet, visant à structurer, valider et lancer une activité entrepreneuriale en un temps record.',
-        duree: 'Environ 200 heures sur 6 mois',
-        contenu: ['Plus de 100 heures de formation', 'Accompagnement individuel', 'Ateliers collectifs', 'Sessions de mise en réseau'],
-        enSavoirPlus: 'https://emergence.bge-parif.com',
-        procedure: 'Prendre contact avec l\'équipe Accélérateurs de BGE PaRIF par email : accelerateurs@bge-parif.com',
-        note: 'Dispositif sélectif - Une sélection est effectuée après étude du dossier'
-      });
-    }
-
-    // 2. ACCÉLÉRATEUR CRÉATION INDIVIDUELLE
-    if (entrepriseCreee && isQPV) {
-      const ageOk = a.ageEntreprise === 'Moins de 3 ans';
-      const caOk = a.typeEntreprise === 'Micro-entreprise' || a.caAnnuel === 'Moins de 30 000 €';
-      if (ageOk && caOk) {
-        eligible.push({
-          nom: 'Accélérateur Création Individuelle',
-          description: 'Programme sur-mesure pour les entrepreneurs en phase de croissance ou de développement qui souhaitent structurer leur activité et augmenter considérablement leur chiffre d\'affaires.',
-          duree: 'Environ 250 heures sur 12 mois',
-          contenu: ['Plus de 100 heures de formation', 'Accompagnement individuel', 'Ateliers collectifs', 'Sessions de mise en réseau'],
-          enSavoirPlus: 'https://creation-individuelle.bge-parif.com/',
-          procedure: 'Prendre contact avec l\'équipe Accélérateurs de BGE PaRIF par email : accelerateurs@bge-parif.com',
-          note: 'Dispositif sélectif - Une sélection est effectuée après étude du dossier'
+        // 2) Infos perso
+        q.push({
+          id: "sexe",
+          question: "Vous êtes :",
+          type: "radio",
+          options: ["Une femme", "Un homme"],
         });
-      }
-    }
 
-    // 3. FORMATIONS CERTIFIANTES
-    if (a.cpf === 'Oui' || a.cpf === 'Je ne sais pas') {
-      eligible.push({
-        nom: 'Formations Certifiantes',
-        description: 'Formations certifiantes destinées aux créateurs, dirigeants ou repreneurs d\'entreprise afin de développer des compétences entrepreneuriales clés.',
-        duree: 'Variable selon la formation (de 14h à 95h)',
-        contenu: [
-          'CCPE (Construire et Conduire un Projet Entrepreneurial) - 95h : Formation complète pour étudier la faisabilité d\'un projet de création ou reprise en acquérant une méthodologie de conduite de projet',
-          'DVRS (Développez la visibilité sur les réseaux sociaux) - 14h : Apprenez à créer un profil, développer des communautés et gérer votre e-réputation sur les réseaux sociaux',
-          'Piloter sa micro-entreprise - 21h : Acquérir les compétences pour la gestion et le développement d\'une micro-entreprise (imposition, cotisations, comptabilité, pilotage)'
-        ],
-        procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/ OU prendre RDV : https://calendly.com/bgeparif/conseil-formation-entrepreneurial-1',
-        note: a.cpf === 'Je ne sais pas' 
-          ? 'Ces formations sont finançables par vos crédits CPF. Pour connaître votre solde CPF, connectez-vous sur www.moncompteformation.gouv.fr' 
-          : 'Formations finançables par vos crédits CPF'
-      });
-    }
-
-    // 4. GÉNÉRATEUR À IMPACT
-    if (!entrepriseCreee && 
-        a.stadeProjet === 'Projet formalisé' && 
-        a.projetImpact === 'Oui' && 
-        isDept75) {
-      eligible.push({
-        nom: 'Générateur à Impact',
-        description: 'Dispositif d\'accompagnement qui permet de confronter vos idées avec des experts, d\'évaluer toutes les options pour entreprendre autrement et de structurer votre modèle économique et stratégie.',
-        duree: 'Environ 28 heures (ateliers tous les 15 jours + RDV individuels)',
-        contenu: ['Ateliers collectifs thématiques orientés impact', 'Rendez-vous individuels avec expert', 'Construction du business model', 'Élaboration d\'un plan d\'action et pitch-deck'],
-        enSavoirPlus: 'https://www.bge-parif.com/structurer-votre-projet/incubateur-parisien-le-generateur-a-impact/',
-        procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/',
-        note: 'Réservé aux projets à impact dans le département 75'
-      });
-    }
-
-    // 5. INCUBATEST
-    if (!entrepriseCreee && 
-        (a.stadeProjet === 'Projet formalisé' || a.stadeProjet === 'Business plan finalisé') && 
-        isVilleIncubatest &&
-        a.activiteReglementee === 'Non' &&
-        !isSalariePleinTemps) {
-      eligible.push({
-        nom: 'Incubatest',
-        description: 'Les couveuses IncubaTest permettent de tester une activité entrepreneuriale dans un cadre sécurisé, avec le statut d\'entrepreneur à l\'essai.',
-        duree: 'Période de test de 6 à 8 mois (15h de RDV individuels + 6 jours de formations)',
-        contenu: ['Rendez-vous individuels', 'Ateliers et formations opérationnelles', 'Appui au développement commercial', 'Communication et gestion'],
-        enSavoirPlus: 'https://www.bge-parif.com/tester-votre-activite-en-couveuse-incubatest/',
-        procedure: 'Participer à une réunion d\'information et s\'inscrire via https://www.bge-parif.com/agenda/',
-        note: 'Sous réserve que l\'activité soit éligible. Exclu pour activités réglementées'
-      });
-    }
-
-    // 6. CRÉER SA RÉUSSITE
-    if (!entrepriseCreee) {
-      let criteresN2 = 0;
-      
-      if (niveauEtudeInferieur) criteresN2++;
-      if (isSenior) criteresN2++;
-      if (isDELD) criteresN2++;
-      if (isQPV || a.criteresSociaux?.includes('Résidence en ZRR (Zone de Revitalisation Rurale)')) criteresN2++;
-      if (a.criteresSociaux?.includes('Sans domicile fixe (SDF)')) criteresN2++;
-      if (a.criteresSociaux?.includes('Parent isolé')) criteresN2++;
-      if (a.criteresSociaux?.includes('Récemment arrivé en France')) criteresN2++;
-
-      const porte1 = (isRSA || isASS || isAAH) || isDETLD;
-      const porte2 = criteresN2 >= 3;
-      const porte3 = isJeune && (a.missionLocale === 'Oui' || a.criteresSociaux?.includes('Sortant de l\'ASE (Aide Sociale à l\'Enfance)') || criteresN2 >= 1);
-      const porte4 = a.handicap === 'Oui' && (a.inscritCapEmploi === 'Oui' || criteresN2 >= 1);
-      const porte5 = a.sortieIAE === 'Oui';
-
-      if (porte1 || porte2 || porte3 || porte4 || porte5) {
-        eligible.push({
-          nom: 'Créer Sa Réussite',
-          description: 'Programme d\'accompagnement personnalisé visant à améliorer l\'accès à la création ou à la reprise d\'entreprise, en adaptant le parcours aux besoins du bénéficiaire.',
-          duree: 'Jusqu\'à 10h d\'accompagnement individuel ou collectif',
-          contenu: ['Entretiens individuels', 'Ateliers collectifs', 'Complément ou prolongation d\'un parcours existant'],
-          enSavoirPlus: 'https://www.bge-parif.com/structurer-votre-projet/creer-sa-reussite/',
-          procedure: 'Contacter BGE PaRIF par email (contact@bge-parif.com) ou téléphone (01 43 55 09 48)',
-          note: 'Programme adapté aux publics prioritaires'
+        q.push({
+          id: "age",
+          question: "Quel est votre âge ?",
+          type: "number",
+          placeholder: "Ex: 30",
         });
-      }
-    }
 
-    // 7. PDI 75
-    if ((isRSA || isASS) && isDETLD && isDept75 && !entrepriseCreee) {
-      eligible.push({
-        nom: 'PDI 75',
-        description: 'Programme départemental d\'insertion visant à faciliter l\'accès à l\'emploi et à la création d\'entreprise pour les bénéficiaires du dispositif.',
-        duree: 'Entre 7 à 8 heures d\'accompagnement individuel',
-        contenu: ['Accompagnement individuel par un conseiller expert en création d\'entreprise'],
-        procedure: 'Se rapprocher de son conseiller insertion ou France Travail, OU contacter BGE PaRIF (contact@bge-parif.com / 01 43 55 09 48)',
-        note: 'Réservé aux bénéficiaires RSA/ASS en DETLD dans le 75'
-      });
-    }
+        const age = parseInt(answers.age, 10) || 0;
+        if (age >= 18 && age <= 30) {
+          q.push({
+            id: "missionLocale",
+            question: "Êtes-vous inscrit(e) auprès d'une Mission Locale ?",
+            type: "radio",
+            options: ["Oui", "Non"],
+          });
+        }
 
-    // 8. PDI 93
-    if ((isRSA || isASS) && isDETLD && isDept93 && !entrepriseCreee) {
-      eligible.push({
-        nom: 'PDI 93',
-        description: 'Programme départemental d\'insertion visant à faciliter l\'accès à l\'emploi et à la création d\'entreprise pour les bénéficiaires du dispositif.',
-        duree: 'Entre 7 à 8 heures d\'accompagnement individuel',
-        contenu: ['Accompagnement individuel par un conseiller expert en création d\'entreprise'],
-        procedure: 'Se rapprocher de son conseiller insertion ou France Travail, OU contacter BGE PaRIF (contact@bge-parif.com / 01 43 55 09 48)',
-        note: 'Réservé aux bénéficiaires RSA/ASS en DETLD dans le 93'
-      });
-    }
+        q.push({
+          id: "codePostal",
+          question: "Quel est votre code postal de résidence ?",
+          type: "text",
+          placeholder: "Ex: 75001",
+        });
 
-    // 9. ACCOMPAGNEMENT RENFORCÉ
-    if (!entrepriseCreee && 
-        (a.stadeProjet === 'Projet formalisé' || a.stadeProjet === 'Business plan finalisé') && 
-        isQPV) {
-      eligible.push({
-        nom: 'Accompagnement Renforcé',
-        description: 'Dispositif visant à proposer un soutien intensif aux porteurs de projet ou entrepreneurs issus ou implantés dans des quartiers prioritaires (QPV) ou zones équivalentes.',
-        duree: 'Parcours de 10 heures en individuel ou collectif',
-        contenu: ['Accompagnement individualisé renforcé', 'Élaboration du plan d\'action', 'Stratégie commerciale, business plan, choix juridique', 'Gestion d\'entreprise et outils de financement'],
-        procedure: 'Contacter BGE PaRIF par email (contact@bge-parif.com) ou téléphone (01 43 55 09 48)',
-        note: 'Réservé aux projets formalisés en QPV'
-      });
-    }
+        q.push({
+          id: "qpv",
+          question:
+            "Résidez-vous en Quartier Prioritaire de la Ville (QPV) ou dans un rayon de 300 mètres autour ?",
+          type: "radio",
+          options: ["Oui", "Non", "Je ne sais pas"],
+          info: "Vous pouvez vérifier sur https://sig.ville.gouv.fr/",
+        });
 
-    // 10. AGEFIPH
-    if (a.handicap === 'Oui' && !entrepriseCreee && a.stadeProjet !== 'Idée') {
-      eligible.push({
-        nom: 'AGEFIPH',
-        description: 'Accompagnement favorisant la création d\'entreprise et l\'insertion professionnelle des personnes en situation de handicap dans les entreprises.',
-        duree: 'Phase ante-création : jusqu\'à 25h / Phase post-création : jusqu\'à 15h sur 3 ans',
-        contenu: ['Accompagnement sur-mesure', 'Montage du projet', 'Démarrage de l\'activité sur 3 ans', 'Suivi post-création'],
-        procedure: 'Se rapprocher de son conseiller Cap Emploi OU de France Travail en exprimant sa volonté de bénéficier du dispositif AGEFIPH',
-        note: 'Reconnaissance RQTH obligatoire'
-      });
-    }
+        // 3) Parcours / situation
+        q.push({
+          id: "niveauEtude",
+          question: "Quel est votre niveau d'étude ?",
+          type: "radio",
+          options: ["Inférieur au CAP/BEP", "CAP/BEP", "Baccalauréat", "Bac+2 et plus"],
+        });
 
-    // 11. PASS ENTREPRENEUR #LEADER 1
-    const exclusLeader1 = (a.sexe === 'Un homme' && isSalariePleinTemps && age > 30);
-    const activiteExclueLeader = a.activiteReglementee === 'Oui';
-    
-    if (age >= 18 && isIDF && a.stadeProjet !== 'Idée' && !entrepriseCreee && !exclusLeader1 && !activiteExclueLeader) {
-      eligible.push({
-        nom: 'Pass Entrepreneur #Leader 1',
-        description: 'Dispositif d\'accompagnement individuel destiné aux porteurs de projet en phase de création.',
-        duree: 'Entre 3 et 7 heures selon votre profil',
-        contenu: ['Élaboration d\'un plan d\'action structuré', 'Définition de la stratégie commerciale et business plan', 'Choix du statut juridique, fiscal et social', 'Fondamentaux de la gestion d\'entreprise', 'Solutions de financement'],
-        procedure: 'Compléter le formulaire en ligne : https://airtable.com/appH6ML4Ix5hyPhQQ/shrYF8iz0OnKJMYlC',
-        note: 'Financé par la Région Île-de-France'
-      });
-    }
+        q.push({
+          id: "statut",
+          question: "Quel est votre statut actuel ?",
+          type: "checkbox",
+          options: [
+            "Demandeur d'emploi",
+            "Salarié à temps complet",
+            "Salarié à temps partiel",
+            "Bénéficiaire RSA",
+            "Bénéficiaire ASS",
+            "Bénéficiaire AAH",
+          ],
+        });
 
-    // 12. PASS ENTREPRENEUR #LEADER 3
-    if (entrepriseCreee && isIDF && a.ageEntreprise === 'Moins de 3 ans' && !activiteExclueLeader) {
-      eligible.push({
-        nom: 'Pass Entrepreneur #Leader 3',
-        description: 'Dispositif d\'accompagnement individuel destiné aux dirigeants d\'entreprise en phase de développement.',
-        duree: 'Entre 3 et 7 heures selon votre profil',
-        contenu: ['Pilotage efficace de l\'entreprise', 'Mise en œuvre de l\'action commerciale', 'Développement du réseau et opportunités d\'affaires', 'Maîtrise des processus de recrutement', 'Sécurisation du développement'],
-        procedure: 'Compléter le formulaire en ligne : https://airtable.com/appH6ML4Ix5hyPhQQ/shrQzKhqLuA531uOg',
-        note: 'Financé par la Région Île-de-France'
-      });
-    }
+        if (answers.statut?.includes("Demandeur d'emploi")) {
+          q.push({
+            id: "dureeDemandeurEmploi",
+            question: "Depuis combien de temps êtes-vous demandeur d'emploi ?",
+            type: "radio",
+            options: ["Moins de 12 mois", "De 12 à 24 mois", "Plus de 24 mois"],
+          });
+        }
 
-    // 13. ACTIV' CRÉA EMERGENCE
-    if (a.inscritFranceTravail === 'Oui' && isDemandeurEmploi && a.stadeProjet === 'Idée' && !entrepriseCreee) {
-      eligible.push({
-        nom: 'Activ\' Créa Émergence',
-        description: 'Programme d\'accompagnement personnalisé qui permet d\'explorer la création ou reprise d\'entreprise comme opportunité/solution de retour à l\'emploi.',
-        duree: 'Parcours sur environ 2 mois (6 ateliers + 3 RDV individuels)',
-        contenu: ['Entretien de diagnostic', 'Parcours personnalisé', 'Entretien de bilan', 'Ateliers collectifs', 'Rendez-vous individuels'],
-        procedure: 'Contacter son conseiller France Travail OU s\'inscrire depuis son espace personnel sur https://www.francetravail.fr/accueil/',
-        note: 'Aide à consolider une idée et évaluer le profil entrepreneurial'
-      });
-    }
+        // (Corrigé) On pose toujours la question France Travail, c'est cohérent et évite le bug
+        q.push({
+          id: "inscritFranceTravail",
+          question: "Êtes-vous inscrit(e) à France Travail ?",
+          type: "radio",
+          options: ["Oui", "Non"],
+        });
 
-    setResults(eligible);
-  };
+        // 4) Critères spécifiques
+        q.push({
+          id: "criteresSociaux",
+          question: "Cochez toutes les situations qui vous concernent :",
+          type: "checkbox",
+          options: [
+            "Parent isolé",
+            "Sans domicile fixe (SDF)",
+            "Récemment arrivé en France",
+            "Sortant de l'ASE (Aide Sociale à l'Enfance)",
+            "Résidence en ZRR (Zone de Revitalisation Rurale)",
+            "Aucun de ces critères",
+          ],
+        });
 
-  const handleAnswer = (questionId, value) => {
-    setAnswers({ ...answers, [questionId]: value });
-  };
+        q.push({
+          id: "handicap",
+          question: "Êtes-vous reconnu(e) travailleur(se) en situation de handicap (RQTH) ?",
+          type: "radio",
+          options: ["Oui", "Non"],
+        });
 
-  const handleNext = () => {
-    const questions = getQuestions();
-    if (step < questions.length - 1) {
-      setStep(step + 1);
-    } else {
-      calculateEligibility();
-    }
-  };
+        if (answers.handicap === "Oui") {
+          q.push({
+            id: "inscritCapEmploi",
+            question: "Êtes-vous inscrit(e) à Cap Emploi ?",
+            type: "radio",
+            options: ["Oui", "Non"],
+          });
+        }
 
-  const handlePrevious = () => {
-    if (step > 0) {
-      setStep(step - 1);
-    }
-  };
+        q.push({
+          id: "sortieIAE",
+          question:
+            "Êtes-vous sorti(e) d'un dispositif IAE (Insertion par l'Activité Économique) depuis moins de 6 mois ?",
+          type: "radio",
+          options: ["Oui", "Non"],
+        });
 
-  const handleReset = () => {
-    setStep(0);
-    setAnswers({});
-    setResults(null);
-  };
+        q.push({
+          id: "cpf",
+          question: "Disposez-vous de crédits CPF (Compte Personnel de Formation) ?",
+          type: "radio",
+          options: ["Oui", "Non", "Je ne sais pas"],
+          info:
+            "Pour le découvrir, connectez-vous à votre espace personnel sur www.moncompteformation.gouv.fr",
+        });
 
-  const questions = getQuestions();
-  const currentQuestion = questions[step];
-  const isAnswered = answers[currentQuestion?.id] !== undefined && answers[currentQuestion?.id] !== '' && 
-                      (Array.isArray(answers[currentQuestion?.id]) ? answers[currentQuestion?.id].length > 0 : true);
+        return q;
+      };
 
-  if (results !== null) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Résultats de votre éligibilité</h1>
-            
-            {results.length === 0 ? (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-6">
-                <div className="flex items-start">
-                  <AlertCircle className="text-orange-500 mt-1 mr-3 flex-shrink-0" size={24} />
-                  <div>
-                    <h3 className="font-semibold text-orange-800 mb-2">Aucun dispositif identifié</h3>
-                    <p className="text-orange-700">
-                      Selon les informations fournies, nous n'avons pas trouvé de dispositif correspondant exactement à votre profil. 
-                      Nous vous recommandons de contacter directement un conseiller pour étudier votre situation plus en détail.
-                    </p>
-                    <p className="text-orange-700 mt-3">
-                      <strong>Contactez BGE PaRIF :</strong><br/>
-                      📧 contact@bge-parif.com<br/>
-                      📞 01 43 55 09 48
-                    </p>
+      const questions = useMemo(() => getQuestions(), [answers]);
+      const currentQuestion = questions[step];
+
+      const isAnswered =
+        currentQuestion &&
+        answers[currentQuestion.id] !== undefined &&
+        answers[currentQuestion.id] !== "" &&
+        (Array.isArray(answers[currentQuestion.id])
+          ? answers[currentQuestion.id].length > 0
+          : true);
+
+      const handleAnswer = (questionId, value) => {
+        // Si "Aucun de ces critères" est coché -> on nettoie les autres
+        if (questionId === "criteresSociaux" && Array.isArray(value)) {
+          if (value.includes("Aucun de ces critères") && value.length > 1) {
+            value = ["Aucun de ces critères"];
+          }
+        }
+        setAnswers((prev) => ({ ...prev, [questionId]: value }));
+      };
+
+      const calculateEligibility = () => {
+        const eligible = [];
+        const a = answers;
+
+        const age = parseInt(a.age, 10) || 0;
+
+        const isQPV = a.qpv === "Oui" || a.qpv === "Je ne sais pas";
+        const isDept75 = (a.codePostal || "").startsWith("75");
+        const isDept93 = (a.codePostal || "").startsWith("93");
+        const isIDF = ["75", "77", "78", "91", "92", "93", "94", "95"].some((d) =>
+          (a.codePostal || "").startsWith(d)
+        );
+
+        const entrepriseCreee = a.entrepriseCreee === "Oui";
+        const isJeune = age >= 18 && age <= 30;
+        const isSenior = age >= 50;
+
+        const isRSA = a.statut?.includes("Bénéficiaire RSA");
+        const isASS = a.statut?.includes("Bénéficiaire ASS");
+        const isAAH = a.statut?.includes("Bénéficiaire AAH");
+        const isDemandeurEmploi = a.statut?.includes("Demandeur d'emploi");
+        const isSalariePleinTemps = a.statut?.includes("Salarié à temps complet");
+
+        const isDETLD = a.dureeDemandeurEmploi === "Plus de 24 mois";
+        const isDELD = a.dureeDemandeurEmploi === "De 12 à 24 mois";
+
+        const niveauEtudeInferieur = ["Inférieur au CAP/BEP", "CAP/BEP"].includes(a.niveauEtude);
+
+        const codesPostIncubatest = [
+          "95400","95500","95720","95380","77410","77290","77230","95440","95190","95470","95140","77990","95670",
+          "77280","95700","95200","77270","91120","91140","91160","91190","91300","91310","91320","91360","91370",
+          "91400","91430","91440","91460","91620","91940","91800","91860","91560","91210","91480","91270","91330",
+          "75001","75002","75003","75004","75005","75006","75007","75008","75009","75010","75011","75012","75013",
+          "75014","75015","75016","75017","75018","75019","75020"
+        ];
+        const isVilleIncubatest = codesPostIncubatest.includes(a.codePostal);
+
+        // 1. Accélérateur Émergence
+        if (
+          !entrepriseCreee &&
+          (a.stadeProjet === "Idée" || a.stadeProjet === "Projet formalisé") &&
+          isQPV &&
+          !isSalariePleinTemps
+        ) {
+          eligible.push({
+            nom: "Accélérateur Émergence",
+            description:
+              "Programme d'accompagnement intensif destiné aux porteurs de projet au stade de l'idée ou du projet.",
+            duree: "Environ 200 heures sur 6 mois",
+            contenu: ["Plus de 100 heures de formation", "Accompagnement individuel", "Ateliers collectifs", "Mise en réseau"],
+            enSavoirPlus: "https://emergence.bge-parif.com",
+            procedure: "Prendre contact : accelerateurs@bge-parif.com",
+            note: "Dispositif sélectif - sélection après étude du dossier",
+          });
+        }
+
+        // 2. Accélérateur Création Individuelle
+        if (entrepriseCreee && isQPV) {
+          const ageOk = a.ageEntreprise === "Moins de 3 ans";
+          const caOk =
+            a.typeEntreprise === "Micro-entreprise" || a.caAnnuel === "Moins de 30 000 €";
+          if (ageOk && caOk) {
+            eligible.push({
+              nom: "Accélérateur Création Individuelle",
+              description:
+                "Programme sur-mesure pour les entrepreneurs en développement souhaitant structurer leur activité.",
+              duree: "Environ 250 heures sur 12 mois",
+              contenu: ["Formation", "Accompagnement individuel", "Ateliers collectifs", "Mise en réseau"],
+              enSavoirPlus: "https://creation-individuelle.bge-parif.com/",
+              procedure: "Prendre contact : accelerateurs@bge-parif.com",
+              note: "Dispositif sélectif - sélection après étude du dossier",
+            });
+          }
+        }
+
+        // 3. Formations certifiantes
+        if (a.cpf === "Oui" || a.cpf === "Je ne sais pas") {
+          eligible.push({
+            nom: "Formations Certifiantes",
+            description:
+              "Formations certifiantes pour développer des compétences entrepreneuriales (finançables via CPF).",
+            duree: "Variable selon la formation",
+            contenu: [
+              "CCPE – 95h",
+              "DVRS – 14h",
+              "Piloter sa micro-entreprise – 21h",
+            ],
+            procedure:
+              "S'inscrire via https://www.bge-parif.com/agenda/ ou prendre RDV : https://calendly.com/bgeparif/conseil-formation-entrepreneurial-1",
+            note:
+              a.cpf === "Je ne sais pas"
+                ? "Connectez-vous sur www.moncompteformation.gouv.fr pour connaître votre solde."
+                : "Finançable par vos crédits CPF.",
+          });
+        }
+
+        // 4. Générateur à Impact
+        if (!entrepriseCreee && a.stadeProjet === "Projet formalisé" && a.projetImpact === "Oui" && isDept75) {
+          eligible.push({
+            nom: "Générateur à Impact",
+            description:
+              "Accompagnement pour structurer votre modèle et stratégie (projets à impact à Paris).",
+            duree: "Environ 28 heures",
+            contenu: ["Ateliers orientés impact", "RDV individuels", "Business model", "Pitch deck"],
+            enSavoirPlus: "https://www.bge-parif.com/structurer-votre-projet/incubateur-parisien-le-generateur-a-impact/",
+            procedure: "S'inscrire via https://www.bge-parif.com/agenda/",
+            note: "Réservé aux projets à impact dans le département 75",
+          });
+        }
+
+        // 5. Incubatest
+        if (
+          !entrepriseCreee &&
+          (a.stadeProjet === "Projet formalisé" || a.stadeProjet === "Business plan finalisé") &&
+          isVilleIncubatest &&
+          a.activiteReglementee === "Non" &&
+          !isSalariePleinTemps
+        ) {
+          eligible.push({
+            nom: "Incubatest",
+            description:
+              "Tester votre activité en couveuse dans un cadre sécurisé (entrepreneur à l'essai).",
+            duree: "6 à 8 mois",
+            contenu: ["RDV individuels", "Formations", "Appui commercial", "Gestion"],
+            enSavoirPlus: "https://www.bge-parif.com/tester-votre-activite-en-couveuse-incubatest/",
+            procedure: "S'inscrire via https://www.bge-parif.com/agenda/",
+            note: "Exclu pour activités réglementées",
+          });
+        }
+
+        // 6. Créer Sa Réussite
+        if (!entrepriseCreee) {
+          let criteresN2 = 0;
+
+          const criteresSociaux = a.criteresSociaux || [];
+          const has = (x) => criteresSociaux.includes(x);
+
+          if (niveauEtudeInferieur) criteresN2++;
+          if (isSenior) criteresN2++;
+          if (isDELD) criteresN2++;
+          if (isQPV || has("Résidence en ZRR (Zone de Revitalisation Rurale)")) criteresN2++;
+          if (has("Sans domicile fixe (SDF)")) criteresN2++;
+          if (has("Parent isolé")) criteresN2++;
+          if (has("Récemment arrivé en France")) criteresN2++;
+
+          const porte1 = (isRSA || isASS || isAAH) || isDETLD;
+          const porte2 = criteresN2 >= 3;
+          const porte3 = isJeune && (a.missionLocale === "Oui" || has("Sortant de l'ASE (Aide Sociale à l'Enfance)") || criteresN2 >= 1);
+          const porte4 = a.handicap === "Oui" && (a.inscritCapEmploi === "Oui" || criteresN2 >= 1);
+          const porte5 = a.sortieIAE === "Oui";
+
+          if (porte1 || porte2 || porte3 || porte4 || porte5) {
+            eligible.push({
+              nom: "Créer Sa Réussite",
+              description:
+                "Programme d'accompagnement personnalisé pour faciliter la création / reprise d'entreprise (publics prioritaires).",
+              duree: "Jusqu'à 10h",
+              contenu: ["Entretiens individuels", "Ateliers collectifs", "Compléments de parcours"],
+              enSavoirPlus: "https://www.bge-parif.com/structurer-votre-projet/creer-sa-reussite/",
+              procedure: "Contacter : contact@bge-parif.com / 01 43 55 09 48",
+              note: "Programme adapté aux publics prioritaires",
+            });
+          }
+        }
+
+        // 7. PDI 75
+        if ((isRSA || isASS) && isDETLD && isDept75 && !entrepriseCreee) {
+          eligible.push({
+            nom: "PDI 75",
+            description:
+              "Programme d'insertion (Paris) pour bénéficiaires RSA/ASS en DETLD, incluant accompagnement création d'entreprise.",
+            duree: "7 à 8 heures",
+            contenu: ["Accompagnement individuel par un conseiller expert"],
+            procedure: "Via conseiller insertion / France Travail ou contact@bge-parif.com",
+            note: "Réservé aux bénéficiaires RSA/ASS en DETLD dans le 75",
+          });
+        }
+
+        // 8. PDI 93
+        if ((isRSA || isASS) && isDETLD && isDept93 && !entrepriseCreee) {
+          eligible.push({
+            nom: "PDI 93",
+            description:
+              "Programme d'insertion (Seine-Saint-Denis) pour bénéficiaires RSA/ASS en DETLD, incluant accompagnement création d'entreprise.",
+            duree: "7 à 8 heures",
+            contenu: ["Accompagnement individuel par un conseiller expert"],
+            procedure: "Via conseiller insertion / France Travail ou contact@bge-parif.com",
+            note: "Réservé aux bénéficiaires RSA/ASS en DETLD dans le 93",
+          });
+        }
+
+        // 9. Accompagnement Renforcé
+        if (!entrepriseCreee && (a.stadeProjet === "Projet formalisé" || a.stadeProjet === "Business plan finalisé") && isQPV) {
+          eligible.push({
+            nom: "Accompagnement Renforcé",
+            description:
+              "Soutien aux porteurs de projet / entrepreneurs en QPV (parcours individuel ou collectif).",
+            duree: "10 heures",
+            contenu: ["Plan d'action", "Business plan", "Choix juridique", "Financement", "Gestion"],
+            procedure: "Contacter : contact@bge-parif.com / 01 43 55 09 48",
+            note: "Réservé aux projets formalisés en QPV",
+          });
+        }
+
+        // 10. AGEFIPH
+        if (a.handicap === "Oui" && !entrepriseCreee && a.stadeProjet !== "Idée") {
+          eligible.push({
+            nom: "AGEFIPH",
+            description:
+              "Accompagnement création d'entreprise pour personnes en situation de handicap (via Cap Emploi / France Travail).",
+            duree: "Jusqu'à 25h (ante) + 15h (post) sur 3 ans",
+            contenu: ["Montage du projet", "Démarrage", "Suivi"],
+            procedure: "Se rapprocher de Cap Emploi ou France Travail",
+            note: "Reconnaissance RQTH obligatoire",
+          });
+        }
+
+        // 11. Pass Entrepreneur #Leader 1
+        const exclusLeader1 = (a.sexe === "Un homme" && isSalariePleinTemps && age > 30);
+        const activiteExclueLeader = a.activiteReglementee === "Oui";
+
+        if (age >= 18 && isIDF && a.stadeProjet !== "Idée" && !entrepriseCreee && !exclusLeader1 && !activiteExclueLeader) {
+          eligible.push({
+            nom: "Pass Entrepreneur #Leader 1",
+            description: "Accompagnement individuel pour porteurs de projet en phase de création (Île-de-France).",
+            duree: "Entre 3 et 7 heures",
+            contenu: ["Plan d'action", "Business plan", "Statut", "Gestion", "Financement"],
+            procedure: "Compléter le formulaire : https://airtable.com/appH6ML4Ix5hyPhQQ/shrYF8iz0OnKJMYlC",
+            note: "Financé par la Région Île-de-France",
+          });
+        }
+
+        // 12. Pass Entrepreneur #Leader 3
+        if (entrepriseCreee && isIDF && a.ageEntreprise === "Moins de 3 ans" && !activiteExclueLeader) {
+          eligible.push({
+            nom: "Pass Entrepreneur #Leader 3",
+            description: "Accompagnement individuel pour dirigeants en développement (Île-de-France).",
+            duree: "Entre 3 et 7 heures",
+            contenu: ["Pilotage", "Commercial", "Réseau", "Recrutement", "Sécurisation"],
+            procedure: "Compléter le formulaire : https://airtable.com/appH6ML4Ix5hyPhQQ/shrQzKhqLuA531uOg",
+            note: "Financé par la Région Île-de-France",
+          });
+        }
+
+        // 13. Activ' Créa Émergence
+        if (a.inscritFranceTravail === "Oui" && isDemandeurEmploi && a.stadeProjet === "Idée" && !entrepriseCreee) {
+          eligible.push({
+            nom: "Activ' Créa Émergence",
+            description:
+              "Parcours pour explorer la création/reprise comme solution de retour à l'emploi (France Travail).",
+            duree: "Environ 2 mois",
+            contenu: ["Diagnostic", "Ateliers", "RDV individuels", "Bilan"],
+            procedure: "Via votre conseiller France Travail ou votre espace personnel sur https://www.francetravail.fr/accueil/",
+            note: "Aide à consolider une idée et évaluer le profil entrepreneurial",
+          });
+        }
+
+        setResults(eligible);
+      };
+
+      const handleNext = () => {
+        if (step < questions.length - 1) setStep(step + 1);
+        else calculateEligibility();
+      };
+
+      const handlePrevious = () => {
+        if (step > 0) setStep(step - 1);
+      };
+
+      const handleReset = () => {
+        setStep(0);
+        setAnswers({});
+        setResults(null);
+      };
+
+      // Écran résultats
+      if (results !== null) {
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <h1 className="text-3xl font-bold text-gray-800 mb-6">
+                  Résultats de votre éligibilité
+                </h1>
+
+                {results.length === 0 ? (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-6">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">⚠️</div>
+                      <div>
+                        <h3 className="font-semibold text-orange-800 mb-2">
+                          Aucun dispositif identifié
+                        </h3>
+                        <p className="text-orange-700">
+                          Selon les informations fournies, aucun dispositif ne correspond exactement à votre profil.
+                          Contactez un conseiller pour une analyse plus fine.
+                        </p>
+                        <p className="text-orange-700 mt-3">
+                          <strong>Contactez BGE PaRIF :</strong><br/>
+                          📧 contact@bge-parif.com<br/>
+                          📞 01 43 55 09 48
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                ) : (
+                  <>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                      <div className="flex items-center gap-2">
+                        <div className="text-xl">✅</div>
+                        <p className="text-green-800 font-semibold">
+                          Vous êtes éligible à {results.length} dispositif{results.length > 1 ? "s" : ""} !
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 mb-8">
+                      {results.map((d, index) => (
+                        <div key={index} className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">
+                          <h3 className="text-2xl font-bold text-blue-900 mb-3">{d.nom}</h3>
+
+                          <p className="text-gray-700 leading-relaxed mb-4">{d.description}</p>
+
+                          {d.duree && (
+                            <div className="mb-3">
+                              <span className="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                ⏱️ {d.duree}
+                              </span>
+                            </div>
+                          )}
+
+                          {d.contenu?.length > 0 && (
+                            <div className="mb-4">
+                              <h4 className="font-semibold text-gray-800 mb-2">📋 Contenu :</h4>
+                              <ul className="list-disc list-inside space-y-1 text-gray-600 ml-2">
+                                {d.contenu.map((item, i) => <li key={i}>{item}</li>)}
+                              </ul>
+                            </div>
+                          )}
+
+                          {d.enSavoirPlus && (
+                            <div className="mb-4">
+                              <a
+                                href={d.enSavoirPlus}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
+                              >
+                                🔗 En savoir plus <span className="ml-1">↗</span>
+                              </a>
+                            </div>
+                          )}
+
+                          {d.procedure && (
+                            <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                              <h4 className="font-semibold text-green-900 mb-2">📞 Comment s'inscrire :</h4>
+                              <div className="text-green-800">
+                                <ClickableText text={d.procedure} />
+                              </div>
+                            </div>
+                          )}
+
+                          {d.note && (
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                              <p className="text-amber-900 text-sm">
+                                <strong>ℹ️ Note :</strong> {d.note}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <button
+                  onClick={handleReset}
+                  className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+                >
+                  🔄 Recommencer le questionnaire
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // Écran questionnaire
+      if (!currentQuestion) {
+        return (
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-gray-700">Chargement…</div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                Découvrez les dispositifs d'accompagnement faits pour vous !
+              </h1>
+              <p className="text-gray-600 mb-6">
+                En complétant ce formulaire, nous identifions l'accompagnement le plus adapté à votre situation.
+              </p>
+
+              <div className="mb-6">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <span>Question {step + 1} sur {questions.length}</span>
+                  <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${((step + 1) / questions.length) * 100}%` }}
+                  ></div>
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                  <div className="flex items-center">
-                    <CheckCircle className="text-green-600 mr-2" size={24} />
-                    <p className="text-green-800 font-semibold">
-                      Vous êtes éligible à {results.length} dispositif{results.length > 1 ? 's' : ''} !
-                    </p>
+
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                  {currentQuestion.question}
+                </h2>
+
+                {currentQuestion.info && (
+                  <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-sm text-blue-700">💡 <ClickableText text={currentQuestion.info} /></p>
+                    {currentQuestion.id === "qpv" && (
+                      <a
+                        href="https://sig.ville.gouv.fr/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold mt-2"
+                      >
+                        Vérifier si vous êtes en QPV <span className="ml-1">↗</span>
+                      </a>
+                    )}
                   </div>
-                </div>
+                )}
 
-                <div className="space-y-4 mb-8">
-                  {results.map((dispositif, index) => (
-                    <div key={index} className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">
-                      <h3 className="text-2xl font-bold text-blue-900 mb-3">{dispositif.nom}</h3>
-                      
-                      <div className="mb-4">
-                        <p className="text-gray-700 leading-relaxed">{dispositif.description}</p>
-                      </div>
+                {currentQuestion.type === "radio" && (
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option) => (
+                      <label
+                        key={option}
+                        className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                        style={{
+                          borderColor: answers[currentQuestion.id] === option ? "#4f46e5" : "#e5e7eb",
+                          backgroundColor: answers[currentQuestion.id] === option ? "#eef2ff" : "white",
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name={currentQuestion.id}
+                          value={option}
+                          checked={answers[currentQuestion.id] === option}
+                          onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                          className="mr-3 w-5 h-5"
+                        />
+                        <span className="text-gray-700 font-medium">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
 
-                      {dispositif.duree && (
-                        <div className="mb-3">
-                          <span className="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">
-                            ⏱️ {dispositif.duree}
-                          </span>
-                        </div>
-                      )}
+                {currentQuestion.type === "checkbox" && (
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option) => (
+                      <label
+                        key={option}
+                        className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                        style={{
+                          borderColor: answers[currentQuestion.id]?.includes(option) ? "#4f46e5" : "#e5e7eb",
+                          backgroundColor: answers[currentQuestion.id]?.includes(option) ? "#eef2ff" : "white",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          value={option}
+                          checked={answers[currentQuestion.id]?.includes(option) || false}
+                          onChange={(e) => {
+                            const current = answers[currentQuestion.id] || [];
+                            const newValue = e.target.checked
+                              ? [...current, option]
+                              : current.filter((item) => item !== option);
+                            handleAnswer(currentQuestion.id, newValue);
+                          }}
+                          className="mr-3 w-5 h-5 rounded"
+                        />
+                        <span className="text-gray-700 font-medium">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
 
-                      {dispositif.contenu && dispositif.contenu.length > 0 && (
-                        <div className="mb-4">
-                          <h4 className="font-semibold text-gray-800 mb-2">📋 Contenu :</h4>
-                          <ul className="list-disc list-inside space-y-1 text-gray-600 ml-2">
-                            {dispositif.contenu.map((item, i) => (
-                              <li key={i}>{item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                {currentQuestion.type === "text" && (
+                  <input
+                    type="text"
+                    placeholder={currentQuestion.placeholder}
+                    value={answers[currentQuestion.id] || ""}
+                    onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"
+                  />
+                )}
 
-                      {dispositif.enSavoirPlus && (
-                        <div className="mb-4">
-                          <a 
-                            href={dispositif.enSavoirPlus} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
-                          >
-                            🔗 En savoir plus <ExternalLink size={16} className="ml-1" />
-                          </a>
-                        </div>
-                      )}
-
-                      {dispositif.procedure && (
-                        <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                          <h4 className="font-semibold text-green-900 mb-2">📞 Comment s'inscrire :</h4>
-                          <div className="text-green-800">{renderClickableText(dispositif.procedure)}</div>
-                        </div>
-                      )}
-
-                      {dispositif.note && (
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                          <p className="text-amber-900 text-sm">
-                            <strong>ℹ️ Note :</strong> {dispositif.note}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            <button
-              onClick={handleReset}
-              className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center"
-            >
-              <RotateCcw className="mr-2" size={20} />
-              Recommencer le questionnaire
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Découvrez les dispositifs d'accompagnement faits pour vous !</h1>
-          <p className="text-gray-600 mb-6">En complétant ce formulaire, vous nous aidez à identifier l'accompagnement le plus adapté à votre situation.</p>
-          
-          <div className="mb-6">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Question {step + 1} sur {questions.length}</span>
-              <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${((step + 1) / questions.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">{currentQuestion.question}</h2>
-            
-            {currentQuestion.info && (
-              <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-700">💡 {currentQuestion.info}</p>
-                {currentQuestion.id === 'qpv' && (
-                  <a 
-                    href="https://sig.ville.gouv.fr/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold mt-2"
-                  >
-                    Vérifier si vous êtes en QPV <ExternalLink size={14} className="ml-1" />
-                  </a>
+                {currentQuestion.type === "number" && (
+                  <input
+                    type="number"
+                    placeholder={currentQuestion.placeholder}
+                    value={answers[currentQuestion.id] || ""}
+                    onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                    className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"
+                  />
                 )}
               </div>
-            )}
 
-            {currentQuestion.type === 'radio' && (
-              <div className="space-y-3">
-                {currentQuestion.options.map((option) => (
-                  <label 
-                    key={option}
-                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-                    style={{
-                      borderColor: answers[currentQuestion.id] === option ? '#4f46e5' : '#e5e7eb',
-                      backgroundColor: answers[currentQuestion.id] === option ? '#eef2ff' : 'white'
-                    }}
+              <div className="flex gap-4">
+                {step > 0 && (
+                  <button
+                    onClick={handlePrevious}
+                    className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
                   >
-                    <input
-                      type="radio"
-                      name={currentQuestion.id}
-                      value={option}
-                      checked={answers[currentQuestion.id] === option}
-                      onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                      className="mr-3 w-5 h-5 text-indigo-600"
-                    />
-                    <span className="text-gray-700 font-medium">{option}</span>
-                  </label>
-                ))}
+                    ← Précédent
+                  </button>
+                )}
+                <button
+                  onClick={handleNext}
+                  disabled={!isAnswered}
+                  className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  {step === questions.length - 1 ? "Voir les résultats" : "Suivant →"}
+                </button>
               </div>
-            )}
-
-            {currentQuestion.type === 'checkbox' && (
-              <div className="space-y-3">
-                {currentQuestion.options.map((option) => (
-                  <label 
-                    key={option}
-                    className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-                    style={{
-                      borderColor: answers[currentQuestion.id]?.includes(option) ? '#4f46e5' : '#e5e7eb',
-                      backgroundColor: answers[currentQuestion.id]?.includes(option) ? '#eef2ff' : 'white'
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      value={option}
-                      checked={answers[currentQuestion.id]?.includes(option) || false}
-                      onChange={(e) => {
-                        const current = answers[currentQuestion.id] || [];
-                        const newValue = e.target.checked
-                          ? [...current, option]
-                          : current.filter(item => item !== option);
-                        handleAnswer(currentQuestion.id, newValue);
-                      }}
-                      className="mr-3 w-5 h-5 text-indigo-600 rounded"
-                    />
-                    <span className="text-gray-700 font-medium">{option}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-
-            {currentQuestion.type === 'text' && (
-              <input
-                type="text"
-                placeholder={currentQuestion.placeholder}
-                value={answers[currentQuestion.id] || ''}
-                onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"
-              />
-            )}
-
-            {currentQuestion.type === 'number' && (
-              <input
-                type="number"
-                placeholder={currentQuestion.placeholder}
-                value={answers[currentQuestion.id] || ''}
-                onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-lg"
-              />
-            )}
-          </div>
-
-          <div className="flex gap-4">
-            {step > 0 && (
-              <button
-                onClick={handlePrevious}
-                className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-              >
-                Précédent
-              </button>
-            )}
-            <button
-              onClick={handleNext}
-              disabled={!isAnswered}
-              className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center"
-            >
-              {step === questions.length - 1 ? 'Voir les résultats' : 'Suivant'}
-              <ChevronRight className="ml-2" size={20} />
-            </button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
+      );
+    }
 
-export default EligibilityTool;
-        //
-    </script>
+    ReactDOM.createRoot(document.getElementById("root")).render(<EligibilityTool />);
+  </script>
 </body>
 </html>
