@@ -102,7 +102,7 @@
             id: "typeEntreprise",
             question: "Quel est le statut juridique de votre entreprise ?",
             type: "radio",
-            options: ["Micro-entreprise", "Société (SARL, SAS, etc.)"],
+            options: ["Micro-entreprise", "Entreprise ou Société (EURL, SAS, etc..)"],
           });
 
           q.push({
@@ -112,7 +112,7 @@
             options: ["Moins de 3 ans", "Plus de 3 ans"],
           });
 
-          if (answers.typeEntreprise === "Société (SARL, SAS, etc.)") {
+          if (answers.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc..)") {
             q.push({
               id: "caAnnuel",
               question: "Quel est votre chiffre d'affaires annuel ?",
