@@ -29,7 +29,7 @@
   <script type="text/babel">
     const { useState, useMemo } = React;
 
-    // Petit helper: rend URLs + emails cliquables dans un texte
+    // Rend URLs (http/https) + emails cliquables
     function ClickableText({ text }) {
       if (!text) return null;
 
@@ -38,7 +38,6 @@
 
       let parts = [text];
 
-      // URLs
       parts = parts.flatMap((part) => {
         if (typeof part !== "string") return part;
         return part.split(urlRegex).map((seg, i) => {
@@ -59,7 +58,6 @@
         });
       });
 
-      // Emails
       parts = parts.flatMap((part) => {
         if (typeof part !== "string") return part;
         return part.split(emailRegex).map((seg, i) => {
@@ -102,7 +100,7 @@
             id: "typeEntreprise",
             question: "Quel est le statut juridique de votre entreprise ?",
             type: "radio",
-            options: ["Micro-entreprise", "Entreprise ou Société (EURL, SAS, etc..)"],
+            options: ["Micro-entreprise", "Entreprise ou Société (EURL, SAS, etc.)"],
           });
 
           q.push({
@@ -112,7 +110,8 @@
             options: ["Moins de 3 ans", "Plus de 3 ans"],
           });
 
-          if (answers.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc..)") {
+          // IMPORTANT: On ne demande le CA que si Entreprise ou Société
+          if (answers.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc.)") {
             q.push({
               id: "caAnnuel",
               question: "Quel est votre chiffre d'affaires annuel ?",
@@ -186,6 +185,7 @@
           placeholder: "Ex: 75001",
         });
 
+        // QPV : uniquement le message 💡 (pas de lien additionnel)
         q.push({
           id: "qpv",
           question:
@@ -226,7 +226,6 @@
           });
         }
 
-        // (Corrigé) On pose toujours la question France Travail, c'est cohérent et évite le bug
         q.push({
           id: "inscritFranceTravail",
           question: "Êtes-vous inscrit(e) à France Travail ?",
@@ -273,13 +272,14 @@
           options: ["Oui", "Non"],
         });
 
+        // CPF : lien cliquable (https://)
         q.push({
           id: "cpf",
           question: "Disposez-vous de crédits CPF (Compte Personnel de Formation) ?",
           type: "radio",
           options: ["Oui", "Non", "Je ne sais pas"],
           info:
-            "Pour le découvrir, connectez-vous à votre espace personnel sur www.moncompteformation.gouv.fr",
+            "Pour le découvrir, connectez-vous à votre espace personnel sur https://www.moncompteformation.gouv.fr",
         });
 
         return q;
@@ -353,30 +353,34 @@
           eligible.push({
             nom: "Accélérateur Émergence",
             description:
-              "Programme d'accompagnement intensif destiné aux porteurs de projet au stade de l'idée ou du projet.",
-            duree: "Environ 200 heures sur 6 mois",
-            contenu: ["Plus de 100 heures de formation", "Accompagnement individuel", "Ateliers collectifs", "Mise en réseau"],
+              "Programme d'accompagnement intensif destiné aux porteurs de projet au stade de l'idée ou du projet, visant à strucuturer, valider et lancer une activité entrepreneuriale en un temps record. (Accompagnement entièrement pris en charge)",
+            duree: "Environ 200 heures d'accompagnement sur 6 mois",
+            contenu: ["Plus de 100 heures de formation", "Accompagnement individuel", "Ateliers collectifs", "Sessions de mise en réseau"],
             enSavoirPlus: "https://emergence.bge-parif.com",
-            procedure: "Prendre contact : accelerateurs@bge-parif.com",
-            note: "Dispositif sélectif - sélection après étude du dossier",
+            procedure: "Prendre contact avec l'équipe Accélérateurs par email : accelerateurs@bge-parif.com",
+            note: "Dispositif sélectif - Une sélection est effectuée après étude du dossier",
           });
         }
 
         // 2. Accélérateur Création Individuelle
+        // - Micro-entreprise: pas de condition CA (et pas de question CA)
+        // - Entreprise ou Société: CA < 30 000 € requis
         if (entrepriseCreee && isQPV) {
           const ageOk = a.ageEntreprise === "Moins de 3 ans";
-          const caOk =
-            a.typeEntreprise === "Micro-entreprise" || a.caAnnuel === "Moins de 30 000 €";
+          const isMicro = a.typeEntreprise === "Micro-entreprise";
+          const isSociete = a.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc.))";
+          const caOk = isMicro || (isSociete && a.caAnnuel === "Moins de 30 000 €");
+
           if (ageOk && caOk) {
             eligible.push({
               nom: "Accélérateur Création Individuelle",
               description:
-                "Programme sur-mesure pour les entrepreneurs en développement souhaitant structurer leur activité.",
-              duree: "Environ 250 heures sur 12 mois",
-              contenu: ["Formation", "Accompagnement individuel", "Ateliers collectifs", "Mise en réseau"],
+                "Programme sur-mesure pour les entrepreneurs en phase de croissance ou de développement qui souhaitent structurer leur activité et augmenter considérablement leur chiffre d'affaires. (Accompagnement entièrement pris en charge)",
+              duree: "Environ 250 heures d'accompagnement sur 12 mois",
+              contenu: ["Formation", "Accompagnement individuel", "Ateliers collectifs", "Sessions de mise en réseau"],
               enSavoirPlus: "https://creation-individuelle.bge-parif.com/",
-              procedure: "Prendre contact : accelerateurs@bge-parif.com",
-              note: "Dispositif sélectif - sélection après étude du dossier",
+              procedure: "Prendre contact avec l'équipe Accélérateurs par email : accelerateurs@bge-parif.com",
+              note: "Dispositif sélectif - Une sélection est effectuée après étude du dossier",
             });
           }
         }
@@ -386,19 +390,19 @@
           eligible.push({
             nom: "Formations Certifiantes",
             description:
-              "Formations certifiantes pour développer des compétences entrepreneuriales (finançables via CPF).",
-            duree: "Variable selon la formation",
+              "Formations certifiantes destinées aux créateurs, dirigeants ou repreneurs d'entreprise afin de développer des compétences entrepreneuriales clés.",
+            duree: "Variable selon la formation (de 14h à 95h)",
             contenu: [
-              "CCPE – 95h",
-              "DVRS – 14h",
-              "Piloter sa micro-entreprise – 21h",
+              "CCPE (Construire et Conduire un Projet Entrepreneurial) – 95h : : Formation complète pour étudier la faisabilité d'un projet de création ou reprise en acquérant une méthodologie de conduite de projet",
+              "DVRS (Développez la visibilité d'une entreprise sur les réseaux sociaux) – 14h : Apprenez à créer un profil, développer des communautés et gérer votre e-réputation sur les réseaux sociaux",
+              "Piloter sa micro-entreprise – 21h : Acquérir les compétences pour la gestion et le développement d'une micro-entreprise (imposition, cotisations, comptabilité, pilotage)",
             ],
             procedure:
-              "S'inscrire via https://www.bge-parif.com/agenda/ ou prendre RDV : https://calendly.com/bgeparif/conseil-formation-entrepreneurial-1",
+              "Participer à la réunion d'information en s'inscrivant via https://www.bge-parif.com/agenda/ ou directement prendre RDV avec la responsable des formations : https://calendly.com/bgeparif/conseil-formation-entrepreneurial-1",
             note:
               a.cpf === "Je ne sais pas"
                 ? "Connectez-vous sur www.moncompteformation.gouv.fr pour connaître votre solde."
-                : "Finançable par vos crédits CPF.",
+                : "Ces formations sont finançables par vos crédits CPF.",
           });
         }
 
@@ -407,12 +411,11 @@
           eligible.push({
             nom: "Générateur à Impact",
             description:
-              "Accompagnement pour structurer votre modèle et stratégie (projets à impact à Paris).",
-            duree: "Environ 28 heures",
-            contenu: ["Ateliers orientés impact", "RDV individuels", "Business model", "Pitch deck"],
+              "Dispositif d'accompagnement qui permet de confronter vos idées avec des experts de la démarche entrepreneuriale, d'évaluer toutes les options pour entreprendre autrement et de structurer votre modèle économique et stratégie.",
+            duree: "Environ 28 heures (avec ateliers tous les 15 jours & des RDV individuels)",
+            contenu: ["Ateliers collectifs orientés impact", "Rendez-vous individuels avec expert", "Construction du Business model", "Élaboration d'un plan d'action et d'un pitch-deck"],
             enSavoirPlus: "https://www.bge-parif.com/structurer-votre-projet/incubateur-parisien-le-generateur-a-impact/",
-            procedure: "S'inscrire via https://www.bge-parif.com/agenda/",
-            note: "Réservé aux projets à impact dans le département 75",
+            procedure: "Participer à la prochaine réunion d'information en s'inscrivant via https://www.bge-parif.com/agenda/",
           });
         }
 
@@ -427,12 +430,12 @@
           eligible.push({
             nom: "Incubatest",
             description:
-              "Tester votre activité en couveuse dans un cadre sécurisé (entrepreneur à l'essai).",
-            duree: "6 à 8 mois",
-            contenu: ["RDV individuels", "Formations", "Appui commercial", "Gestion"],
+              "Les couveuses IncubaTest permettent de tester une activité entrepreneuriale dans un cadre sécurisé, avec le statut d'entrepreneur à l'essai.",
+            duree: "Période de test de 6 à 8 mois (avec 15h de RDV individuels & 6 jours de formations)",
+            contenu: ["Rendez-vous individuels", "Ateliers et formations opérationnelles", "Appui au développement commercial, à la communication et à la gestion"],
             enSavoirPlus: "https://www.bge-parif.com/tester-votre-activite-en-couveuse-incubatest/",
-            procedure: "S'inscrire via https://www.bge-parif.com/agenda/",
-            note: "Exclu pour activités réglementées",
+            procedure: "Participer à la prochaine réunion d'information en s'inscrivant via https://www.bge-parif.com/agenda/",
+            note: "Sous réserve que l'activité soit éligible. Exclu pour activités réglementées",
           });
         }
 
@@ -461,12 +464,11 @@
             eligible.push({
               nom: "Créer Sa Réussite",
               description:
-                "Programme d'accompagnement personnalisé pour faciliter la création / reprise d'entreprise (publics prioritaires).",
-              duree: "Jusqu'à 10h",
-              contenu: ["Entretiens individuels", "Ateliers collectifs", "Compléments de parcours"],
+                "Programme d'accompagnement personnalisé visant à améliorer l'accès à la création ou à la reprise d'entreprise, en adaptant le parcours aux besoins du bénéficiaire.",
+              duree: "Jusqu'à 10h d'accomapgnement individuel ou collectif",
+              contenu: ["Entretiens individuels", "Ateliers collectifs", "Complément ou prolongation d'un parcours existant"],
               enSavoirPlus: "https://www.bge-parif.com/structurer-votre-projet/creer-sa-reussite/",
-              procedure: "Contacter : contact@bge-parif.com / 01 43 55 09 48",
-              note: "Programme adapté aux publics prioritaires",
+              procedure: "Contacter BGE PaRIF par email (contact@bge-parif.com) ou par téléphone (01 43 55 09 48)",
             });
           }
         }
@@ -476,11 +478,10 @@
           eligible.push({
             nom: "PDI 75",
             description:
-              "Programme d'insertion (Paris) pour bénéficiaires RSA/ASS en DETLD, incluant accompagnement création d'entreprise.",
-            duree: "7 à 8 heures",
-            contenu: ["Accompagnement individuel par un conseiller expert"],
-            procedure: "Via conseiller insertion / France Travail ou contact@bge-parif.com",
-            note: "Réservé aux bénéficiaires RSA/ASS en DETLD dans le 75",
+              "Programme départemental d'insertion visant à faciliter l'accès à l'emploi et à la création d'entreprise pour les bénéficiaires du dispositif",
+            duree: "Entre 7 à 8 heures d'accompagnement",
+            contenu: ["Accompagnement individuel par un conseiller expert en création d'entreprise"],
+            procedure: "Se rapprocher de son conseiller insertion ou France Travail OU contacter BGE PaRIF par mail (contact@bge-parif.com) ou par téléphone (01 43 55 09 48)",
           });
         }
 
@@ -489,11 +490,10 @@
           eligible.push({
             nom: "PDI 93",
             description:
-              "Programme d'insertion (Seine-Saint-Denis) pour bénéficiaires RSA/ASS en DETLD, incluant accompagnement création d'entreprise.",
-            duree: "7 à 8 heures",
+              "Programme départemental d'insertion visant à faciliter l'accès à l'emploi et à la création d'entreprise pour les bénéficiaires du dispositif",
+            duree: "Entre 7 à 8 heures d'accompagnement",
             contenu: ["Accompagnement individuel par un conseiller expert"],
-            procedure: "Via conseiller insertion / France Travail ou contact@bge-parif.com",
-            note: "Réservé aux bénéficiaires RSA/ASS en DETLD dans le 93",
+            procedure: "Se rapprocher de son conseiller insertion ou France Travail OU contacter BGE PaRIF par mail (contact@bge-parif.com) ou par téléphone (01 43 55 09 48)",
           });
         }
 
@@ -502,11 +502,10 @@
           eligible.push({
             nom: "Accompagnement Renforcé",
             description:
-              "Soutien aux porteurs de projet / entrepreneurs en QPV (parcours individuel ou collectif).",
-            duree: "10 heures",
-            contenu: ["Plan d'action", "Business plan", "Choix juridique", "Financement", "Gestion"],
-            procedure: "Contacter : contact@bge-parif.com / 01 43 55 09 48",
-            note: "Réservé aux projets formalisés en QPV",
+              "ispositif visant à proposer un soutien intensif aux porteurs de projet ou entrepreneurs issus ou implantés dans des quartiers prioritaires (QPV) ou zones équivalentes.",
+            duree: "10 heures d'accompagnement en individuel ou collectif",
+            contenu: ["Accompagnement individualisé renforcé, Élaboration du plan d'action", "Stratégie commerciale", "Business plan", "Choix juridique", "Gestion d'entreprise", "Outils de financement"],
+            procedure: "Contacter BGE PaRIF par email (contact@bge-parif.com) ou par téléphone (01 43 55 09 48)",
           });
         }
 
@@ -515,10 +514,10 @@
           eligible.push({
             nom: "AGEFIPH",
             description:
-              "Accompagnement création d'entreprise pour personnes en situation de handicap (via Cap Emploi / France Travail).",
-            duree: "Jusqu'à 25h (ante) + 15h (post) sur 3 ans",
-            contenu: ["Montage du projet", "Démarrage", "Suivi"],
-            procedure: "Se rapprocher de Cap Emploi ou France Travail",
+              "Accompagnement favorisant la création d'entreprise et l'insertion professionnelle des personnes en situation de handicap dans les entreprises.",
+            duree: "Phase ante-création : jusqu'à 25h / Phase post-création : jusqu'à 15h sur 3 ans",
+            contenu: ["Montage du projet", "Démarrage de l'activité", "Suivi post-création"],
+            procedure: "Se rapprocher de son conseiller Cap Emploi ou de France Travail en exprimant sa volonté de bénéficier du dispositif AGEFIPH",
             note: "Reconnaissance RQTH obligatoire",
           });
         }
@@ -530,9 +529,9 @@
         if (age >= 18 && isIDF && a.stadeProjet !== "Idée" && !entrepriseCreee && !exclusLeader1 && !activiteExclueLeader) {
           eligible.push({
             nom: "Pass Entrepreneur #Leader 1",
-            description: "Accompagnement individuel pour porteurs de projet en phase de création (Île-de-France).",
-            duree: "Entre 3 et 7 heures",
-            contenu: ["Plan d'action", "Business plan", "Statut", "Gestion", "Financement"],
+            description: "Dispositif d'accompagnement individuel destiné aux porteurs de projet en phase de création.",
+            duree: "Entre 3 et 7 heures selon votre profil",
+            contenu: ["Élaboration d'un plan d'action structuré", "Définition de la stratégie commerciale et du Business plan", "Choix du statut juridique, fiscal et social", "Fondamentaux de la gestion d'entreprise", "Identification des meilleures solutions de financement"],
             procedure: "Compléter le formulaire : https://airtable.com/appH6ML4Ix5hyPhQQ/shrYF8iz0OnKJMYlC",
             note: "Financé par la Région Île-de-France",
           });
@@ -542,9 +541,9 @@
         if (entrepriseCreee && isIDF && a.ageEntreprise === "Moins de 3 ans" && !activiteExclueLeader) {
           eligible.push({
             nom: "Pass Entrepreneur #Leader 3",
-            description: "Accompagnement individuel pour dirigeants en développement (Île-de-France).",
-            duree: "Entre 3 et 7 heures",
-            contenu: ["Pilotage", "Commercial", "Réseau", "Recrutement", "Sécurisation"],
+            description: "Dispositif d'accompagnement individuel destiné aux dirigeants en phase de développement.",
+            duree: "Entre 3 et 7 heures selon votre profil",
+            contenu: ["Pilotage efficace de l'entreprise", "Mise en œuvre de l'action commercial", "Développement du réseau", "Maîtrise des processus de recrutement", "Sécurisation du développement"],
             procedure: "Compléter le formulaire : https://airtable.com/appH6ML4Ix5hyPhQQ/shrQzKhqLuA531uOg",
             note: "Financé par la Région Île-de-France",
           });
@@ -555,24 +554,14 @@
           eligible.push({
             nom: "Activ' Créa Émergence",
             description:
-              "Parcours pour explorer la création/reprise comme solution de retour à l'emploi (France Travail).",
-            duree: "Environ 2 mois",
-            contenu: ["Diagnostic", "Ateliers", "RDV individuels", "Bilan"],
-            procedure: "Via votre conseiller France Travail ou votre espace personnel sur https://www.francetravail.fr/accueil/",
-            note: "Aide à consolider une idée et évaluer le profil entrepreneurial",
+              "Parcours d'accompagnement personnalisé qui permet d'explorer la création ou reprise comme solution de retour à l'emploi. Concrètement, il aide à consolider et enrichier une idée, évaluer le profil entrepreneurial et identifier les conditions de réussite du projet.",
+            duree: "Environ 2 mois (avec 6 ateliers & RDV individuels) ",
+            contenu: ["Entretien Diagnostic", "Ateliers collectifs", "Rendez-vous individuels", "Entretien de bilan"],
+            procedure: "Contacter son conseiller France Travail ou s'inscrire directeemnt depuis son espace personnel : https://www.francetravail.fr/accueil/",
           });
         }
 
         setResults(eligible);
-      };
-
-      const handleNext = () => {
-        if (step < questions.length - 1) setStep(step + 1);
-        else calculateEligibility();
-      };
-
-      const handlePrevious = () => {
-        if (step > 0) setStep(step - 1);
       };
 
       const handleReset = () => {
@@ -581,7 +570,7 @@
         setResults(null);
       };
 
-      // Écran résultats
+      // Résultats
       if (results !== null) {
         return (
           <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
@@ -615,7 +604,7 @@
                   <>
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                       <div className="flex items-center gap-2">
-                        <div className="text-xl">✅</div>
+                        <CheckCircle className="text-green-600 mr-2" size={24} />
                         <p className="text-green-800 font-semibold">
                           Vous êtes éligible à {results.length} dispositif{results.length > 1 ? "s" : ""} !
                         </p>
@@ -654,7 +643,7 @@
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
                               >
-                                🔗 En savoir plus <span className="ml-1">↗</span>
+                                🔗 Pour en savoir plus <span className="ml-1">↗</span>
                               </a>
                             </div>
                           )}
@@ -671,7 +660,7 @@
                           {d.note && (
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                               <p className="text-amber-900 text-sm">
-                                <strong>ℹ️ Note :</strong> {d.note}
+                                <strong> Note :</strong> {d.note}
                               </p>
                             </div>
                           )}
@@ -693,15 +682,7 @@
         );
       }
 
-      // Écran questionnaire
-      if (!currentQuestion) {
-        return (
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-gray-700">Chargement…</div>
-          </div>
-        );
-      }
-
+      // Questionnaire
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
           <div className="max-w-3xl mx-auto">
@@ -733,17 +714,9 @@
 
                 {currentQuestion.info && (
                   <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <p className="text-sm text-blue-700">💡 <ClickableText text={currentQuestion.info} /></p>
-                    {currentQuestion.id === "qpv" && (
-                      <a
-                        href="https://sig.ville.gouv.fr/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold mt-2"
-                      >
-                        Vérifier si vous êtes en QPV <span className="ml-1">↗</span>
-                      </a>
-                    )}
+                    <p className="text-sm text-blue-700">
+                      💡 <ClickableText text={currentQuestion.info} />
+                    </p>
                   </div>
                 )}
 
@@ -826,14 +799,17 @@
               <div className="flex gap-4">
                 {step > 0 && (
                   <button
-                    onClick={handlePrevious}
+                    onClick={() => setStep(step - 1)}
                     className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
                   >
                     ← Précédent
                   </button>
                 )}
                 <button
-                  onClick={handleNext}
+                  onClick={() => {
+                    if (step < questions.length - 1) setStep(step + 1);
+                    else calculateEligibility();
+                  }}
                   disabled={!isAnswered}
                   className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
