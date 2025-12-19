@@ -534,9 +534,21 @@
               "Formations certifiantes destinées aux créateurs, dirigeants ou repreneurs d'entreprise afin de développer des compétences entrepreneuriales clés.",
             duree: "Variable selon la formation (de 14h à 95h)",
             contenu: [
-              "CCPE (Construire et Conduire un Projet Entrepreneurial) – 95h : Formation complète pour étudier la faisabilité d'un projet de création ou reprise en acquérant une méthodologie de conduite de projet",
-              "DVRS (Développez la visibilité d'une entreprise sur les réseaux sociaux) – 14h : Apprenez à créer un profil, développer des communautés et gérer votre e-réputation sur les réseaux sociaux",
-              "Piloter sa micro-entreprise – 21h : Acquérir les compétences pour la gestion et le développement d'une micro-entreprise (imposition, cotisations, comptabilité, pilotage)",
+                {
+                  titre: "CCPE (Construire et Conduire un Projet Entrepreneurial) – 95h :",
+                  description:
+                    "Formation complète pour étudier la faisabilité d'un projet de création ou reprise en acquérant une méthodologie de conduite de projet",
+                },
+              {
+                titre: "DVRS (Développez la visibilité d'une entreprise sur les réseaux sociaux) – 14h :",
+                description:
+                  "Apprenez à créer un profil, développer des communautés et gérer votre e-réputation sur les réseaux sociaux",
+              },
+              {
+                titre: "Piloter sa micro-entreprise – 21h :",
+                description:
+                  "Acquérir les compétences pour la gestion et le développement d'une micro-entreprise (imposition, cotisations, comptabilité, pilotage)",
+              },
             ],
             procedure:
               "Participer à la réunion d'information en s'inscrivant via https://www.bge-parif.com/agenda/ ou directement prendre RDV avec la responsable des formations : https://calendly.com/bgeparif/conseil-formation-entrepreneurial-1",
@@ -797,7 +809,18 @@
                             <div className="mb-4">
                               <h4 className="font-semibold text-gray-800 mb-2">📋 Contenu :</h4>
                               <ul className="list-disc list-inside space-y-1 text-gray-600 ml-2">
-                                {d.contenu.map((item, i) => <li key={i}>{item}</li>)}
+                                {d.contenu.map((item, i) => (
+                                  <li key={i}>
+                                    {typeof item === "string" ? (
+                                      item
+                                    ) : (
+                                      <div className="leading-snug">
+                                        <span className="underline font-semibold">{item.titre}</span>
+                                        <div className="mt-1">{item.description}</div>
+                                      </div>
+                                    )}
+                                  </li>
+                              ))}
                               </ul>
                             </div>
                           )}
