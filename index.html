@@ -368,7 +368,7 @@
         if (entrepriseCreee && isQPV) {
           const ageOk = a.ageEntreprise === "Moins de 3 ans";
           const isMicro = a.typeEntreprise === "Micro-entreprise";
-          const isSociete = a.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc.))";
+          const isSociete = a.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc.)";
           const caOk = isMicro || (isSociete && a.caAnnuel === "Moins de 30 000 €");
 
           if (ageOk && caOk) {
@@ -604,7 +604,18 @@
                   <>
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                       <div className="flex items-center gap-2">
-                        <CheckCircle className="text-green-600 mr-2" size={24} />
+                        <svg
+                          className="w-6 h-6 text-green-600 mr-2"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                       >
+                          <path d="M20 6L9 17l-5-5" />
+                       </svg>
                         <p className="text-green-800 font-semibold">
                           Vous êtes éligible à {results.length} dispositif{results.length > 1 ? "s" : ""} !
                         </p>
