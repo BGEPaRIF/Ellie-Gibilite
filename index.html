@@ -27,7 +27,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const PRIMARY_COLOR = "#084b8e";
+    const PRIMARY_COLOR = "#00a3da";
     const PRIMARY_BG = "#e6eff8"; // version très claire du bleu pour le fond sélectionné
     const { useState, useMemo } = React;
 
@@ -828,6 +828,7 @@
                   }}
                   disabled={!isAnswered}
                   className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  style={{ backgroundCOlor: PRIMARY_COLOR }}
                 >
                   {step === questions.length - 1 ? "Voir les résultats" : "Suivant →"}
                 </button>
