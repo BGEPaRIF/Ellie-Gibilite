@@ -113,7 +113,7 @@
   <script type="text/babel">
     const PRIMARY_COLOR = "#00a3da";
     const PRIMARY_BG = "#e0f5fb"; // version très claire du bleu pour le fond sélectionné
-    const { useState, useMemo } = React;
+    const { useState, useMemo, useEffect } = React;
 
     // Rend URLs (http/https) + emails cliquables
     function ClickableText({ text }) {
@@ -384,6 +384,17 @@
 
       const questions = useMemo(() => getQuestions(), [answers]);
       const currentQuestion = questions[step];
+
+      useEffect(() => {
+        if (step > questions.length - 1) {
+          setStep(questions.length - 1);
+        }
+      }, [questions.length]);
+
+      if (!currentQuestion) {
+        return <div className="p-6 text-gray-600">Chargement…</div>;
+      }
+
 
       const validateField = (questionId, value) => {
         let error = "";
@@ -699,8 +710,8 @@
       };
 
       const hasError =
-        (currentQuestion.id === "age" && errors.age) ||
-        (currentQuestion.id === "codePostal" && errors.codePostal);
+        (currentQuestion?.id === "age" && errors.age) ||
+        (currentQuestion?.id === "codePostal" && errors.codePostal);
 
       // Résultats
       if (results !== null) {
@@ -756,14 +767,21 @@
 
                     <div className="space-y-4 mb-8">
                       {results.map((d, index) => (
-                        <div key={index} className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">
+                        <div
+                          key={index}
+                          className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all"
+                          style={{borderColor: PRIMARY_COLOR }}
+                        >
                           <h3 className="text-2xl font-bold text-blue-900 mb-3">{d.nom}</h3>
 
                           <p className="text-gray-700 leading-relaxed mb-4">{d.description}</p>
 
                           {d.duree && (
                             <div className="mb-3">
-                              <span className="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">
+                              <span
+                                className="inline-block px-3 py-1 rounded-full text-sm font-semibold"
+                                style={{ backgroundColor: PRIMARY_BG, color: "#036b8f" }}
+                              >
                                 ⏱️ {d.duree}
                               </span>
                             </div>
