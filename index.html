@@ -261,7 +261,7 @@
         q.push({
           id: "age",
           question: "Quel est votre âge ?",
-          type: "number",
+          type: "text",
           placeholder: "Ex: 30",
         });
 
@@ -389,7 +389,7 @@
         if (step > questions.length - 1) {
           setStep(questions.length - 1);
         }
-      }, [questions.length]);
+      }, [step, questions.length]);
 
       if (!currentQuestion) {
         return <div className="p-6 text-gray-600">Chargement…</div>;
@@ -403,7 +403,7 @@
           const age = parseInt(value, 10);
           if (!value) error = "L’âge est obligatoire.";
           else if (isNaN(age)) error = "L’âge doit être un nombre.";
-          else if (age < 16 || age > 120) error = "Veuillez saisir un âge valide.";
+          else if (age < 16 || age > 99) error = "Veuillez saisir un âge valide.";
         }
 
         if (questionId === "codePostal") {
@@ -943,38 +943,43 @@
                       type="text"
                       placeholder={currentQuestion.placeholder}
                       value={answers[currentQuestion.id] || ""}
-                      onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                      inputMode={currentQuestion.id === "codePostal" ? "numeric" : undefined}
-                      pattern={currentQuestion.id === "codePostal" ? "\\d*" : undefined}
-                      maxLength={currentQuestion.id === "codePostal" ? 5 : undefined}
-                      className={`w-full p-4 border-2 rounded-lg text-lg ${
-                        currentQuestion.id === "codePostal" && errors.codePostal ? "input-error" : ""
-                      }`}
-                      />
+                      onChange={(e) => {
+                        let v = e.target.value;
 
+                        // 🔹 Âge : uniquement chiffres, max 2 caractères
+                        if (currentQuestion.id === "age") {
+                          v = v.replace(/\D/g, "").slice(0, 2);
+                        }
+
+                        // 🔹 Code postal : uniquement chiffres, max 5 caractères
+                        if (currentQuestion.id === "codePostal") {
+                          v = v.replace(/\D/g, "").slice(0, 5);
+                        }
+
+                        handleAnswer(currentQuestion.id, v);
+                      }}
+                      inputMode={
+                        currentQuestion.id === "age" || currentQuestion.id === "codePostal"
+                        ? "numeric"
+                        : undefined
+                      }
+                      className={`w-full p-4 border-2 rounded-lg text-lg ${
+                        (currentQuestion.id === "codePostal" && errors.codePostal) ||
+                        (currentQuestion.id === "age" && errors.age)
+                        ? "input-error"
+                        : ""
+                      }`}
+                    />
+                    
                     {currentQuestion.id === "codePostal" && errors.codePostal && (
                     <p className="mt-2 text-sm text-red-600">{errors.codePostal}</p>
                   )}
+
+                    {currentQuestion.id === "age" && errors.age && (
+                    <p className="mt-2 text-sm text-red-600">{errors.age}</p>
+                  )}
                 </>
               )}
-
-              {currentQuestion.type === "number" && (
-                <>
-                  <input
-                    type="number"
-                    placeholder={currentQuestion.placeholder}
-                    value={answers[currentQuestion.id] || ""}
-                    onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                    className={`w-full p-4 border-2 rounded-lg text-lg ${
-                      currentQuestion.id === "age" && errors.age ? "input-error" : ""
-                    }`}
-                  />
-
-                  {currentQuestion.id === "age" && errors.age && (
-                  <p className="mt-2 text-sm text-red-600">{errors.age}</p>
-                )}
-                </>
-            )}
 
               </div>
 
