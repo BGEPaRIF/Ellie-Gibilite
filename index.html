@@ -752,7 +752,8 @@
                           checked={answers[currentQuestion.id] === option}
                           onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
                           className="mr-3 w-5 h-5"
-                          style={{accentColor: PRIMARY_COLOR}}
+                          style={{ accentColor: PRIMARY_COLOR }}
+                          filter: grayscale(20%)
                         />
                         <span className="text-gray-700 font-medium">{option}</span>
                       </label>
