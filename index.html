@@ -113,6 +113,7 @@
   <script type="text/babel">
     const PRIMARY_COLOR = "#00a3da";
     const PRIMARY_BG = "#e0f5fb"; // version très claire du bleu pour le fond sélectionné
+    const TITLE_COLOR = "#084b8e"; // titres & liens
     const { useState, useMemo, useEffect } = React;
 
     // Rend URLs (http/https) + emails cliquables
@@ -137,7 +138,8 @@
               href={part}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
+              className="underline font-medium inline-flex items-center"
+              style={{ color: TITLE_COLOR }}
             >
               {part} <span className="ml-1">↗</span>
             </a>
@@ -161,7 +163,8 @@
               <a
                 key={`email-${idx}-${j}`}
                 href={`mailto:${seg}`}
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="underline font-medium"
+                style={{ color: TITLE_COLOR }}
               >
                 {seg}
               </a>
@@ -671,7 +674,7 @@
             duree: "Entre 3 et 7 heures selon votre profil",
             contenu: ["Élaboration d'un plan d'action structuré", "Définition de la stratégie commerciale et du Business plan", "Choix du statut juridique, fiscal et social", "Fondamentaux de la gestion d'entreprise", "Identification des meilleures solutions de financement"],
             procedure: "Compléter le formulaire : https://airtable.com/appH6ML4Ix5hyPhQQ/shrYF8iz0OnKJMYlC",
-            note: "Financé par la Région Île-de-France",
+            note: "Dispositif financé par la Région Île-de-France",
           });
         }
 
@@ -683,7 +686,7 @@
             duree: "Entre 3 et 7 heures selon votre profil",
             contenu: ["Pilotage efficace de l'entreprise", "Mise en œuvre de l'action commercial", "Développement du réseau", "Maîtrise des processus de recrutement", "Sécurisation du développement"],
             procedure: "Compléter le formulaire : https://airtable.com/appH6ML4Ix5hyPhQQ/shrQzKhqLuA531uOg",
-            note: "Financé par la Région Île-de-France",
+            note: "Dispositif financé par la Région Île-de-France",
           });
         }
 
@@ -772,7 +775,13 @@
                           className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all"
                           style={{borderColor: PRIMARY_COLOR }}
                         >
-                          <h3 className="text-2xl font-bold text-blue-900 mb-3">{d.nom}</h3>
+                          <h3
+                            className="text-2xl font-bold mb-3"
+                            style={{ color: TITLE_COLOR }}
+                          >
+                            {d.nom}
+                          </h3>
+
 
                           <p className="text-gray-700 leading-relaxed mb-4">{d.description}</p>
 
@@ -802,7 +811,8 @@
                                 href={d.enSavoirPlus}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
+                                className="inline-flex items-center font-semibold underline"
+                                style={{ color: TITLE_COLOR }}
                               >
                                 🔗 Pour en savoir plus <span className="ml-1">↗</span>
                               </a>
@@ -810,9 +820,24 @@
                           )}
 
                           {d.procedure && (
-                            <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                              <h4 className="font-semibold text-green-900 mb-2">📞 Comment s'inscrire :</h4>
-                              <div className="text-green-800">
+                            <div
+                              className="mb-4 border rounded-lg p-4"
+                              style={{ backgroundColor: PRIMARY_BG, borderColor: PRIMARY_COLOR }}
+                            >
+                              <div className="mb-3">
+                                <span
+                                  className="inline-block px-3 py-1 rounded-full text-sm font-semibold"
+                                  style={{
+                                    backgroundColor: "white",
+                                    color: "#036b8f",
+                                    border: `1px solid ${PRIMARY_COLOR}`,
+                                  }}
+                                >
+                                  📞 Comment s’inscrire
+                                </span>
+                              </div>
+                              
+                              <div style={{ color: "#0f172a" }}>
                                 <ClickableText text={d.procedure} />
                               </div>
                             </div>
