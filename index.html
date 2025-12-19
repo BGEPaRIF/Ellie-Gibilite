@@ -27,6 +27,8 @@
   <div id="root"></div>
 
   <script type="text/babel">
+    const PRIMARY_COLOR = "#084b8e";
+    const PRIMARY_BG = "#e6eff8"; // version très claire du bleu pour le fond sélectionné
     const { useState, useMemo } = React;
 
     // Rend URLs (http/https) + emails cliquables
@@ -393,7 +395,7 @@
               "Formations certifiantes destinées aux créateurs, dirigeants ou repreneurs d'entreprise afin de développer des compétences entrepreneuriales clés.",
             duree: "Variable selon la formation (de 14h à 95h)",
             contenu: [
-              "CCPE (Construire et Conduire un Projet Entrepreneurial) – 95h : : Formation complète pour étudier la faisabilité d'un projet de création ou reprise en acquérant une méthodologie de conduite de projet",
+              "CCPE (Construire et Conduire un Projet Entrepreneurial) – 95h : Formation complète pour étudier la faisabilité d'un projet de création ou reprise en acquérant une méthodologie de conduite de projet",
               "DVRS (Développez la visibilité d'une entreprise sur les réseaux sociaux) – 14h : Apprenez à créer un profil, développer des communautés et gérer votre e-réputation sur les réseaux sociaux",
               "Piloter sa micro-entreprise – 21h : Acquérir les compétences pour la gestion et le développement d'une micro-entreprise (imposition, cotisations, comptabilité, pilotage)",
             ],
@@ -684,6 +686,7 @@
                 <button
                   onClick={handleReset}
                   className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+                  style={{ backgroundCOlor: PRIMARY_COLOR }}
                 >
                   🔄 Recommencer le questionnaire
                 </button>
@@ -713,7 +716,7 @@
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${((step + 1) / questions.length) * 100}%` }}
+                    style={{ width: `${((step + 1) / questions.length) * 100}%`, backgroundColor: PRIMARY_COLOR, }}
                   ></div>
                 </div>
               </div>
@@ -738,8 +741,8 @@
                         key={option}
                         className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                         style={{
-                          borderColor: answers[currentQuestion.id] === option ? "#4f46e5" : "#e5e7eb",
-                          backgroundColor: answers[currentQuestion.id] === option ? "#eef2ff" : "white",
+                          borderColor: answers[currentQuestion.id] === option ? PRIMARY_COLOR : "#e5e7eb",
+                          backgroundColor: answers[currentQuestion.id] === option ? PRIMARY_BG : "white",
                         }}
                       >
                         <input
@@ -749,6 +752,7 @@
                           checked={answers[currentQuestion.id] === option}
                           onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
                           className="mr-3 w-5 h-5"
+                          style={{accentColor: PRIMARY_COLOR}}
                         />
                         <span className="text-gray-700 font-medium">{option}</span>
                       </label>
@@ -763,8 +767,8 @@
                         key={option}
                         className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                         style={{
-                          borderColor: answers[currentQuestion.id]?.includes(option) ? "#4f46e5" : "#e5e7eb",
-                          backgroundColor: answers[currentQuestion.id]?.includes(option) ? "#eef2ff" : "white",
+                          borderColor: answers[currentQuestion.id]?.includes(option) ? PRIMARY_COLOR : "#e5e7eb",
+                          backgroundColor: answers[currentQuestion.id]?.includes(option) ? PRIMARY_BG : "white",
                         }}
                       >
                         <input
@@ -779,6 +783,7 @@
                             handleAnswer(currentQuestion.id, newValue);
                           }}
                           className="mr-3 w-5 h-5 rounded"
+                          style={{accentColor: PRIMARY_COLOR}}
                         />
                         <span className="text-gray-700 font-medium">{option}</span>
                       </label>
