@@ -28,7 +28,7 @@
 
   <script type="text/babel">
     const PRIMARY_COLOR = "#00a3da";
-    const PRIMARY_BG = "#e6eff8"; // version très claire du bleu pour le fond sélectionné
+    const PRIMARY_BG = "#e0f5fb"; // version très claire du bleu pour le fond sélectionné
     const { useState, useMemo } = React;
 
     // Rend URLs (http/https) + emails cliquables
@@ -194,7 +194,7 @@
             "Résidez-vous en Quartier Prioritaire de la Ville (QPV) ou dans un rayon de 300 mètres autour ?",
           type: "radio",
           options: ["Oui", "Non", "Je ne sais pas"],
-          info: "Vous pouvez vérifier sur https://sig.ville.gouv.fr/",
+          info: "Vous pouvez vérifier votre adresse sur https://sig.ville.gouv.fr/",
         });
 
         // 3) Parcours / situation
@@ -685,8 +685,8 @@
 
                 <button
                   onClick={handleReset}
-                  className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-                  style={{ backgroundCOlor: PRIMARY_COLOR }}
+                  className="w-full text-white py-3 px-6 rounded-lg font-semibold transition-colors"
+                  style={{ backgroundColor: PRIMARY_COLOR }}
                 >
                   🔄 Recommencer le questionnaire
                 </button>
@@ -705,7 +705,7 @@
                 Découvrez les dispositifs d'accompagnement faits pour vous !
               </h1>
               <p className="text-gray-600 mb-6">
-                En complétant ce formulaire, nous identifions l'accompagnement le plus adapté à votre situation.
+                En complétant ce formulaire, nous vous aidons à identifier l'accompagnement le plus adapté à votre situation.
               </p>
 
               <div className="mb-6">
@@ -827,8 +827,8 @@
                     else calculateEligibility();
                   }}
                   disabled={!isAnswered}
-                  className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-                  style={{ backgroundCOlor: PRIMARY_COLOR }}
+                  className="flex-1 text-white py-3 px-6 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed"
+                  style={{ backgroundColor: isAnswered ? PRIMARY_COLOR : "#00a3da" }}
                 >
                   {step === questions.length - 1 ? "Voir les résultats" : "Suivant →"}
                 </button>
