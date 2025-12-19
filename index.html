@@ -178,6 +178,32 @@
       return <>{finalParts}</>;
     }
 
+    function LogoHeader({ size = "md" }) {
+      const sizes = {
+        sm: "h-8",
+        md: "h-10", // recommandé
+        lg: "h-12",
+      };
+
+      return (
+        <div className="flex justify-center mb-4">
+          <a
+            href="https://www.bge-parif.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block"
+          >
+            <img
+              src="./logo-bge.svg"
+              alt="Logo BGE PaRIF"
+              className={`${sizes[size]} w-auto transition-opacity hover:opacity-80`}
+
+              />
+          </a>
+        </div>
+      );
+    }
+
     function EligibilityTool() {
       const [step, setStep] = useState(0);
       const [answers, setAnswers] = useState({});
@@ -731,6 +757,8 @@
           <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
             <div className="max-w-4xl mx-auto">
               <div className="bg-white rounded-2xl shadow-xl p-8">
+                <LogoHeader size="md" />
+                
                 <h1 className="text-3xl font-bold text-gray-800 mb-6">
                   Résultats de votre éligibilité
                 </h1>
@@ -849,14 +877,14 @@
                               </div>
 
                               <div className="text-sm text-green-800 leading-relaxed">
-                                <ClickableText text={d.procedure} color= #166534"/>
+                                <ClickableText text={d.procedure} color= "#166534"/>
                               </div>
                             </div>
                           )}
 
                           {d.note && (
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                              <p className="text-amber-900 text-xs leading-relaxed">
+                              <p className="text-amber-900 text-sm leading-relaxed">
                                 <strong> Note :</strong> {d.note}
                               </p>
                             </div>
@@ -885,6 +913,8 @@
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8">
+                <LogoHeader size="md" />
+
               <h1 className="text-3xl font-bold text-gray-800 mb-2">
                 Découvrez les dispositifs d'accompagnement faits pour vous !
               </h1>
