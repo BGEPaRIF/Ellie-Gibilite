@@ -119,50 +119,60 @@
     function ClickableText({ text }) {
       if (!text) return null;
 
+      // Regex "match" (ok avec /g)
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
 
-      let parts = [text];
+      // 1) Split sur les URLs
+      const urlParts = String(text).split(urlRegex);
 
-      parts = parts.flatMap((part) => {
-        if (typeof part !== "string") return part;
-        return part.split(urlRegex).map((seg, i) => {
-          if (urlRegex.test(seg)) {
-            return (
-              <a
-                key={"url-" + i}
-                href={seg}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
-              >
-                {seg} <span className="ml-1">↗</span>
-              </a>
-            );
-          }
-          return seg;
-        });
+      const withUrls = urlParts.map((part, i) => {
+        // Ici on ne fait PAS urlRegex.test(part) (bug avec /g)
+        const isUrl = part.startsWith("http://") || part.startsWith("https://");
+
+        if (isUrl) {
+          return (
+            <a
+              key={`url-${i}`}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
+            >
+              {part} <span className="ml-1">↗</span>
+            </a>
+          );
+        }
+        return part;
       });
 
-      parts = parts.flatMap((part) => {
-        if (typeof part !== "string") return part;
-        return part.split(emailRegex).map((seg, i) => {
-          if (emailRegex.test(seg)) {
+      // 2) Pour chaque morceau non-URL, split sur les emails
+      const finalParts = withUrls.flatMap((node, idx) => {
+        if (typeof node !== "string") return [node];
+
+        const emailParts = node.split(emailRegex);
+
+        return emailParts.map((seg, j) => {
+          const looksLikeEmail =
+            seg.includes("@") && seg.includes(".") && !seg.includes(" ");
+
+          if (looksLikeEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(seg)) {
             return (
               <a
-                key={"email-" + i}
-                href={"mailto:" + seg}
+                key={`email-${idx}-${j}`}
+                href={`mailto:${seg}`}
                 className="text-blue-600 hover:text-blue-800 underline"
               >
                 {seg}
               </a>
             );
           }
+
           return seg;
         });
       });
 
-      return <>{parts}</>;
+      return <>{finalParts}</>;
     }
 
     function EligibilityTool() {
