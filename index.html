@@ -20,6 +20,16 @@
 
   <style>
     body { font-family: 'Poppins', sans-serif; }
+    input[type="text"],
+  input[type="number"]{
+    border-color: #d1d5db; /* gris clair */
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus{
+    border-color: #00a3da;
+    outline: none;
+    box-shadow: 0 0 0 1px #00a3da;
+  }
   </style>
 </head>
 
@@ -715,7 +725,7 @@
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                    className="h-2 rounded-full transition-all duration-300"
                     style={{ width: `${((step + 1) / questions.length) * 100}%`, backgroundColor: PRIMARY_COLOR, }}
                   ></div>
                 </div>
@@ -752,8 +762,6 @@
                           checked={answers[currentQuestion.id] === option}
                           onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
                           className="mr-3 w-5 h-5"
-                          style={{ accentColor: PRIMARY_COLOR }}
-                          filter: grayscale(20%)
                         />
                         <span className="text-gray-700 font-medium">{option}</span>
                       </label>
@@ -829,7 +837,7 @@
                   }}
                   disabled={!isAnswered}
                   className="flex-1 text-white py-3 px-6 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed"
-                  style={{ backgroundColor: isAnswered ? PRIMARY_COLOR : "#00a3da" }}
+                  style={{ backgroundColor: isAnswered ? PRIMARY_COLOR : "#cbd5e1" }}
                 >
                   {step === questions.length - 1 ? "Voir les résultats" : "Suivant →"}
                 </button>
