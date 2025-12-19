@@ -20,16 +20,90 @@
 
   <style>
     body { font-family: 'Poppins', sans-serif; }
+
     input[type="text"],
-  input[type="number"]{
-    border-color: #d1d5db; /* gris clair */
+    input[type="number"]{
+      border-color: #d1d5db; /* gris clair */
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus{
+      border-color: #00a3da;
+      outline: none;
+      box-shadow: 0 0 0 1px #00a3da;
+    }
+    
+    .input-error {
+      border-color: #dc2626 !important;
+      box-shadow: 0 0 0 1px #dc2626;
+    }
+
+    .radio-custom {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #9ca3af; /* gris non coché */
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    background: white;
+    cursor: pointer;
   }
-  input[type="text"]:focus,
-  input[type="number"]:focus{
+
+  .radio-custom::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #00a3da; /* 🎯 TON BLEU EXACT */
+    transform: scale(0);
+    transition: transform 0.15s ease-in-out;
+  }
+
+  .radio-custom:checked {
     border-color: #00a3da;
-    outline: none;
-    box-shadow: 0 0 0 1px #00a3da;
   }
+
+  .radio-custom:focus,
+.checkbox-outline:focus{
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,163,218,.35);
+}
+
+  .radio-custom:checked::before {
+    transform: scale(1);
+  }
+  
+    .checkbox-outline{
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #9ca3af;   /* gris au repos */
+  border-radius: 6px;
+  background: white;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.checkbox-outline::after{
+  content: "";
+  width: 10px;
+  height: 6px;
+  border-left: 3px solid #00a3da;
+  border-bottom: 3px solid #00a3da;
+  transform: rotate(-45deg) scale(0);
+  transition: transform 0.12s ease-in-out;
+}
+
+.checkbox-outline:checked{
+  border-color: #00a3da;
+}
+
+.checkbox-outline:checked::after{
+  transform: rotate(-45deg) scale(1);
+}
   </style>
 </head>
 
@@ -95,6 +169,7 @@
       const [step, setStep] = useState(0);
       const [answers, setAnswers] = useState({});
       const [results, setResults] = useState(null);
+      const [errors, setErrors] = useState({});
 
       const getQuestions = () => {
         const q = [];
@@ -300,6 +375,26 @@
       const questions = useMemo(() => getQuestions(), [answers]);
       const currentQuestion = questions[step];
 
+      const validateField = (questionId, value) => {
+        let error = "";
+        
+        if (questionId === "age") {
+          const age = parseInt(value, 10);
+          if (!value) error = "L’âge est obligatoire.";
+          else if (isNaN(age)) error = "L’âge doit être un nombre.";
+          else if (age < 16 || age > 120) error = "Veuillez saisir un âge valide.";
+        }
+
+        if (questionId === "codePostal") {
+          if (!value) error = "Le code postal est obligatoire.";
+          else if (!/^\d{5}$/.test(value))
+            error = "Le code postal doit contenir 5 chiffres.";
+        }
+
+        setErrors((prev) => ({ ...prev, [questionId]: error }));
+        return error === "";
+      };
+
       const isAnswered =
         currentQuestion &&
         answers[currentQuestion.id] !== undefined &&
@@ -309,13 +404,23 @@
           : true);
 
       const handleAnswer = (questionId, value) => {
-        // Si "Aucun de ces critères" est coché -> on nettoie les autres
+        // 🔹 Règle existante : "Aucun de ces critères"
         if (questionId === "criteresSociaux" && Array.isArray(value)) {
           if (value.includes("Aucun de ces critères") && value.length > 1) {
             value = ["Aucun de ces critères"];
           }
         }
+        
+        // ✅ 1) On enregistre la réponse
         setAnswers((prev) => ({ ...prev, [questionId]: value }));
+
+        // ✅ 2) Optionnel : on efface l'erreur affichée dès que l'utilisateur retape
+        setErrors((prev) => ({ ...prev, [questionId]: "" }));
+
+        // ✅ 3) Validation live pour âge + code postal
+        if (questionId === "age" || questionId === "codePostal") {
+          validateField(questionId, value);
+        }
       };
 
       const calculateEligibility = () => {
@@ -580,7 +685,12 @@
         setStep(0);
         setAnswers({});
         setResults(null);
+        setErrors({});
       };
+
+      const hasError =
+        (currentQuestion.id === "age" && errors.age) ||
+        (currentQuestion.id === "codePostal" && errors.codePostal);
 
       // Résultats
       if (results !== null) {
@@ -697,7 +807,7 @@
                   onClick={handleReset}
                   className="w-full text-white py-3 px-6 rounded-lg font-semibold transition-colors"
                   style={{ backgroundColor: PRIMARY_COLOR }}
-                >
+                  >
                   🔄 Recommencer le questionnaire
                 </button>
               </div>
@@ -761,7 +871,7 @@
                           value={option}
                           checked={answers[currentQuestion.id] === option}
                           onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                          className="mr-3 w-5 h-5"
+                          className="mr-3 radio-custom"
                         />
                         <span className="text-gray-700 font-medium">{option}</span>
                       </label>
@@ -791,8 +901,7 @@
                               : current.filter((item) => item !== option);
                             handleAnswer(currentQuestion.id, newValue);
                           }}
-                          className="mr-3 w-5 h-5 rounded"
-                          style={{accentColor: PRIMARY_COLOR}}
+                          className="mr-3 checkbox-outline"
                         />
                         <span className="text-gray-700 font-medium">{option}</span>
                       </label>
@@ -801,24 +910,44 @@
                 )}
 
                 {currentQuestion.type === "text" && (
-                  <input
-                    type="text"
-                    placeholder={currentQuestion.placeholder}
-                    value={answers[currentQuestion.id] || ""}
-                    onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                    className="w-full p-4 border-2 rounded-lg text-lg"
-                  />
-                )}
+                  <>
+                    <input
+                      type="text"
+                      placeholder={currentQuestion.placeholder}
+                      value={answers[currentQuestion.id] || ""}
+                      onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                      inputMode={currentQuestion.id === "codePostal" ? "numeric" : undefined}
+                      pattern={currentQuestion.id === "codePostal" ? "\\d*" : undefined}
+                      maxLength={currentQuestion.id === "codePostal" ? 5 : undefined}
+                      className={`w-full p-4 border-2 rounded-lg text-lg ${
+                        currentQuestion.id === "codePostal" && errors.codePostal ? "input-error" : ""
+                      }`}
+                      />
 
-                {currentQuestion.type === "number" && (
+                    {currentQuestion.id === "codePostal" && errors.codePostal && (
+                    <p className="mt-2 text-sm text-red-600">{errors.codePostal}</p>
+                  )}
+                </>
+              )}
+
+              {currentQuestion.type === "number" && (
+                <>
                   <input
                     type="number"
                     placeholder={currentQuestion.placeholder}
                     value={answers[currentQuestion.id] || ""}
                     onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-                    className="w-full p-4 border-2 rounded-lg text-lg"
+                    className={`w-full p-4 border-2 rounded-lg text-lg ${
+                      currentQuestion.id === "age" && errors.age ? "input-error" : ""
+                    }`}
                   />
+
+                  {currentQuestion.id === "age" && errors.age && (
+                  <p className="mt-2 text-sm text-red-600">{errors.age}</p>
                 )}
+                </>
+            )}
+
               </div>
 
               <div className="flex gap-4">
@@ -832,12 +961,20 @@
                 )}
                 <button
                   onClick={() => {
+                    const id = currentQuestion.id;
+
+                    if (id === "age" || id === "codePostal") {
+                      const ok = validateField(id, answers[id] || "");
+                      if (!ok) return; // bloque si invalide
+                    }
+                    
                     if (step < questions.length - 1) setStep(step + 1);
                     else calculateEligibility();
                   }}
-                  disabled={!isAnswered}
+
+                  disabled={!isAnswered || hasError}
                   className="flex-1 text-white py-3 px-6 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed"
-                  style={{ backgroundColor: isAnswered ? PRIMARY_COLOR : "#cbd5e1" }}
+                  style={{ backgroundColor: (!isAnswered || hasError) ? "#cbd5e1" : PRIMARY_COLOR }}
                 >
                   {step === questions.length - 1 ? "Voir les résultats" : "Suivant →"}
                 </button>
