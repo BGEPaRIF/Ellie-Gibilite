@@ -117,7 +117,7 @@
     const { useState, useMemo, useEffect } = React;
 
     // Rend URLs (http/https) + emails cliquables
-    function ClickableText({ text }) {
+    function ClickableText({ text, color }) {
       if (!text) return null;
 
       // Regex "match" (ok avec /g)
@@ -139,7 +139,7 @@
               target="_blank"
               rel="noopener noreferrer"
               className="underline font-medium inline-flex items-center"
-              style={{ color: TITLE_COLOR }}
+              style={{ color: color || TITLE_COLOR }}
             >
               {part} <span className="ml-1">↗</span>
             </a>
@@ -164,7 +164,7 @@
                 key={`email-${idx}-${j}`}
                 href={`mailto:${seg}`}
                 className="underline font-medium"
-                style={{ color: TITLE_COLOR }}
+                style={{ color: color || TITLE_COLOR }}
               >
                 {seg}
               </a>
@@ -494,8 +494,8 @@
           eligible.push({
             nom: "Accélérateur Émergence",
             description:
-              "Programme d'accompagnement intensif destiné aux porteurs de projet au stade de l'idée ou du projet, visant à strucuturer, valider et lancer une activité entrepreneuriale en un temps record. (Accompagnement entièrement pris en charge)",
-            duree: "Environ 200 heures d'accompagnement sur 6 mois",
+              "Programme d'accompagnement intensif destiné aux porteurs de projet au stade de l'idée ou du projet, visant à strucuturer, valider et lancer une activité entrepreneuriale en un temps record.",
+            duree: "Environ 200 heures d'accompagnement sur 6 mois - Entièrement pris en charge",
             contenu: ["Plus de 100 heures de formation", "Accompagnement individuel", "Ateliers collectifs", "Sessions de mise en réseau"],
             enSavoirPlus: "https://emergence.bge-parif.com",
             procedure: "Prendre contact avec l'équipe Accélérateurs par email : accelerateurs@bge-parif.com",
@@ -516,8 +516,8 @@
             eligible.push({
               nom: "Accélérateur Création Individuelle",
               description:
-                "Programme sur-mesure pour les entrepreneurs en phase de croissance ou de développement qui souhaitent structurer leur activité et augmenter considérablement leur chiffre d'affaires. (Accompagnement entièrement pris en charge)",
-              duree: "Environ 250 heures d'accompagnement sur 12 mois",
+                "Programme sur-mesure pour les entrepreneurs en phase de croissance ou de développement qui souhaitent structurer leur activité et augmenter considérablement leur chiffre d'affaires.",
+              duree: "Environ 250 heures d'accompagnement sur 12 mois - Entièrement pris en charge",
               contenu: ["Formation", "Accompagnement individuel", "Ateliers collectifs", "Sessions de mise en réseau"],
               enSavoirPlus: "https://creation-individuelle.bge-parif.com/",
               procedure: "Prendre contact avec l'équipe Accélérateurs par email : accelerateurs@bge-parif.com",
@@ -581,8 +581,8 @@
             nom: "Incubatest",
             description:
               "Les couveuses IncubaTest permettent de tester une activité entrepreneuriale dans un cadre sécurisé, avec le statut d'entrepreneur à l'essai.",
-            duree: "Période de test de 6 à 8 mois (avec 15h de RDV individuels & 6 jours de formations)",
-            contenu: ["Rendez-vous individuels", "Ateliers et formations opérationnelles", "Appui au développement commercial, à la communication et à la gestion"],
+            duree: "Période de test de 6 à 8 mois",
+            contenu: ["15 heures de rendez-vous individuels", "6 jours d'ateliers et formations opérationnelles", "Appui au développement commercial, à la communication et à la gestion"],
             enSavoirPlus: "https://www.bge-parif.com/tester-votre-activite-en-couveuse-incubatest/",
             procedure: "Participer à la prochaine réunion d'information en s'inscrivant via https://www.bge-parif.com/agenda/",
             note: "Sous réserve que l'activité soit éligible. Exclu pour activités réglementées",
@@ -615,7 +615,7 @@
               nom: "Créer Sa Réussite",
               description:
                 "Programme d'accompagnement personnalisé visant à améliorer l'accès à la création ou à la reprise d'entreprise, en adaptant le parcours aux besoins du bénéficiaire.",
-              duree: "Jusqu'à 10h d'accomapgnement individuel ou collectif",
+              duree: "Jusqu'à 10h d'accomapgnement",
               contenu: ["Entretiens individuels", "Ateliers collectifs", "Complément ou prolongation d'un parcours existant"],
               enSavoirPlus: "https://www.bge-parif.com/structurer-votre-projet/creer-sa-reussite/",
               procedure: "Contacter BGE PaRIF par email (contact@bge-parif.com) ou par téléphone (01 43 55 09 48)",
@@ -808,7 +808,7 @@
                           {d.contenu?.length > 0 && (
                             <div className="mb-4">
                               <h4 className="font-semibold text-gray-800 mb-2">📋 Contenu :</h4>
-                              <ul className="list-disc list-inside space-y-1 text-gray-600 ml-2">
+                              <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 ml-2">
                                 {d.contenu.map((item, i) => (
                                   <li key={i}>
                                     {typeof item === "string" ? (
@@ -844,19 +844,19 @@
                               <div className="flex items-center gap-2 mb-2">
                                 <span className="text-green-600">📞</span>
                                 <span className="text-xs font-semibold text-green-800 uppercase tracking-wide">
-                                  Comment s’inscrire
+                                  Comment s’inscrire ?
                                 </span>
                               </div>
 
                               <div className="text-sm text-green-800 leading-relaxed">
-                                <ClickableText text={d.procedure} />
+                                <ClickableText text={d.procedure} color= #166534"/>
                               </div>
                             </div>
                           )}
 
                           {d.note && (
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                              <p className="text-amber-900 text-sm">
+                              <p className="text-amber-900 text-xs leading-relaxed">
                                 <strong> Note :</strong> {d.note}
                               </p>
                             </div>
