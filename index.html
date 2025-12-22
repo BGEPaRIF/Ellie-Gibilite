@@ -787,8 +787,6 @@
         if (!contact.nom.trim()) return "Le nom est obligatoire.";
         if (!contact.email.trim()) return "L’email est obligatoire.";
         if (!emailOk) return "Veuillez saisir un email valide.";
-        if (!contact.telephone.trim()) return "Le numéro de téléphone est obligatoire.";
-        if (!phoneOk) return "Veuillez saisir un numéro de téléphone valide.";
         
         if (!contact.consent)
           return "Le consentement est obligatoire pour être recontacté(e).";
@@ -849,7 +847,7 @@
                   />
                   <input
                     className="w-full p-4 border-2 rounded-lg"
-                    placeholder="Téléphone *"
+                    placeholder="Téléphone (optionnel)"
                     inputMode="tel"
                     autoComplete="tel"
                     value={contact.telephone}
