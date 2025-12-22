@@ -116,7 +116,7 @@
     const PRIMARY_COLOR = "#00a3da";
     const PRIMARY_BG = "#e0f5fb"; // version très claire du bleu pour le fond sélectionné
     const TITLE_COLOR = "#084b8e"; // titres & liens
-    const { useState, useMemo, useEffect, useRef } = React;
+    const { useState, useMemo, useEffect } = React;
 
     // Rend URLs (http/https) + emails cliquables
     function ClickableText({ text, color }) {
@@ -211,25 +211,7 @@
       const [answers, setAnswers] = useState({});
       const [results, setResults] = useState(null);
       const [errors, setErrors] = useState({});
-      const cardRef = useRef(null);
       
-      const scrollToCardTop = () => {
-        const prefersReduced =
-          window.matchMedia &&
-          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        if (cardRef.current) {
-          cardRef.current.scrollIntoView({
-            behavior: prefersReduced ? "auto" : "smooth",
-            block: "start",
-          });
-          return;
-        }
-
-        // fallback si ref indispo
-        window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
-      };
-
       const getQuestions = () => {
         const q = [];
 
@@ -770,7 +752,6 @@
         setAnswers({});
         setResults(null);
         setErrors({});
-        requestAnimationFrame(() => scrollToCardTop());
       };
 
       const hasError =
@@ -782,7 +763,7 @@
         return (
           <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
             <div className="max-w-4xl mx-auto">
-              <div ref={cardRef} className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
+              <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
                 <LogoHeader size="md" />
 
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">
@@ -950,7 +931,7 @@
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
           <div className="max-w-3xl mx-auto">
-            <div ref={cardRef} className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
+            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
               <LogoHeader size="md" />
 
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
@@ -1113,10 +1094,8 @@
                                         
                     if (step < questions.length - 1) {
                       setStep(step + 1);
-                      requestAnimationFrame(() => scrollToCardTop());
                     } else {
                       calculateEligibility();
-                      requestAnimationFrame(() => scrollToCardTop());
                     }
                   }}
 
