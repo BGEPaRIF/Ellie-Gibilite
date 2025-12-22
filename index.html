@@ -116,7 +116,7 @@
     const PRIMARY_COLOR = "#00a3da";
     const PRIMARY_BG = "#e0f5fb"; // version très claire du bleu pour le fond sélectionné
     const TITLE_COLOR = "#084b8e"; // titres & liens
-    const { useState, useMemo, useEffect } = React;
+    const { useState, useMemo, useEffect, useRef } = React;
 
     // Rend URLs (http/https) + emails cliquables
     function ClickableText({ text, color }) {
@@ -211,7 +211,39 @@
       const [answers, setAnswers] = useState({});
       const [results, setResults] = useState(null);
       const [errors, setErrors] = useState({});
-      
+
+      const [showContact, setShowContact] = useState(false);
+      const [contact, setContact] = useState({
+        prenom: "",
+        nom: "",
+        email: "",
+        telephone: "",
+        consent: false,
+      });
+      const [sendStatus, setSendStatus] = useState({ loading: false, error: "", ok: false });
+
+      const WEBHOOK_URL = "https://hook.eu1.make.com/ljt5c2lbr6dhrj5yal0aw2a7xwxub1dp";
+      const sendLead = async (payload) => {
+        try {
+          const response = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error("Erreur lors de l’envoi des données");
+          }
+
+          return true; // succès
+        } catch (error) {
+          console.error("Erreur envoi lead :", error);
+          return false; // échec
+        }
+      };
+
       const getQuestions = () => {
         const q = [];
 
@@ -474,10 +506,10 @@
         }
       };
 
-      const calculateEligibility = () => {
+      const computeEligibility = () => {
         const eligible = [];
         const a = answers;
-
+      
         const age = parseInt(a.age, 10) || 0;
 
         const isQPV = a.qpv === "Oui" || a.qpv === "Je ne sais pas";
@@ -521,7 +553,7 @@
           eligible.push({
             nom: "Accélérateur Émergence",
             description:
-              "Programme d'accompagnement intensif destiné aux porteurs de projet au stade de l'idée ou du projet. Il  vise à strucuturer, valider et lancer une activité entrepreneuriale en un temps record.",
+              "Programme d'accompagnement intensif destiné aux porteurs de projet au stade de l'idée ou du projet. Il  vise à structurer, valider et lancer une activité entrepreneuriale en un temps record.",
             duree: "Environ 200 heures d'accompagnement sur 6 mois",
             contenu: ["Plus de 100 heures de formation", "Accompagnement individuel", "Ateliers collectifs", "Sessions de mise en réseau"],
             enSavoirPlus: "https://emergence.bge-parif.com",
@@ -648,7 +680,7 @@
               nom: "Créer Sa Réussite",
               description:
                 "Programme d'accompagnement personnalisé visant à améliorer l'accès à la création ou à la reprise d'entreprise, en adaptant le parcours aux besoins du bénéficiaire.",
-              duree: "Jusqu'à 10h d'accomapgnement",
+              duree: "Jusqu'à 10h d'accompagnement",
               contenu: ["Entretiens individuels", "Ateliers collectifs", "Complément ou prolongation d'un parcours existant"],
               enSavoirPlus: "https://www.bge-parif.com/structurer-votre-projet/creer-sa-reussite/",
               procedure: "Contacter BGE PaRIF par email (contact@bge-parif.com) ou par téléphone (01 43 55 09 48)",
@@ -685,7 +717,7 @@
           eligible.push({
             nom: "Accompagnement Renforcé",
             description:
-              "ispositif visant à proposer un soutien intensif aux porteurs de projet ou entrepreneurs issus ou implantés dans des quartiers prioritaires (QPV) ou zones équivalentes.",
+              "Dispositif visant à proposer un soutien intensif aux porteurs de projet ou entrepreneurs issus ou implantés dans des quartiers prioritaires (QPV) ou zones équivalentes.",
             duree: "10 heures d'accompagnement en individuel ou collectif",
             contenu: ["Accompagnement individualisé renforcé, Élaboration du plan d'action", "Stratégie commerciale", "Business plan", "Choix juridique", "Gestion d'entreprise", "Outils de financement"],
             procedure: "Contacter BGE PaRIF par email (contact@bge-parif.com) ou par téléphone (01 43 55 09 48)",
@@ -726,7 +758,7 @@
             nom: "Pass Entrepreneur #Leader 3",
             description: "Dispositif d'accompagnement individuel destiné aux dirigeants en phase de développement.",
             duree: "Entre 3 et 7 heures selon votre profil",
-            contenu: ["Pilotage efficace de l'entreprise", "Mise en œuvre de l'action commercial", "Développement du réseau", "Maîtrise des processus de recrutement", "Sécurisation du développement"],
+            contenu: ["Pilotage efficace de l'entreprise", "Mise en œuvre de l'action commerciale", "Développement du réseau", "Maîtrise des processus de recrutement", "Sécurisation du développement"],
             procedure: "Compléter le formulaire : https://airtable.com/appH6ML4Ix5hyPhQQ/shrQzKhqLuA531uOg",
             note: "Dispositif financé par la Région Île-de-France",
           });
@@ -740,11 +772,24 @@
               "Parcours d'accompagnement personnalisé qui permet d'explorer la création ou reprise comme solution de retour à l'emploi. Concrètement, il aide à consolider et enrichier une idée, évaluer le profil entrepreneurial et identifier les conditions de réussite du projet.",
             duree: "Environ 2 mois (avec 6 ateliers & RDV individuels) ",
             contenu: ["Entretien Diagnostic", "Ateliers collectifs", "Rendez-vous individuels", "Entretien de bilan"],
-            procedure: "Contacter son conseiller France Travail ou s'inscrire directeemnt depuis son espace personnel : https://www.francetravail.fr/accueil/",
+            procedure: "Contacter son conseiller France Travail ou s'inscrire directement depuis son espace personnel : https://www.francetravail.fr/accueil/",
           });
         }
 
-        setResults(eligible);
+        return eligible;
+      };
+
+      const validateContact = () => {
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim());
+
+        if (!contact.prenom.trim()) return "Le prénom est obligatoire.";
+        if (!contact.nom.trim()) return "Le nom est obligatoire.";
+        if (!contact.email.trim()) return "L’email est obligatoire.";
+        if (!emailOk) return "Veuillez saisir un email valide.";
+        if (!contact.consent)
+          return "Le consentement est obligatoire pour être recontacté(e).";
+        
+        return "";
       };
 
       const handleReset = () => {
@@ -757,7 +802,140 @@
       const hasError =
         (currentQuestion?.id === "age" && errors.age) ||
         (currentQuestion?.id === "codePostal" && errors.codePostal);
-      
+
+      if (showContact && results === null) {
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+            <div className="max-w-3xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
+                <LogoHeader size="md" />
+
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+                  Laissez-nous vos coordonnées
+                </h1>
+                <p className="text-gray-600 mb-6">
+                  Pour que l’équipe BGE PaRIF puisse vous recontacter et vous orienter vers le bon dispositif.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <input
+                    className="w-full p-4 border-2 rounded-lg"
+                    placeholder="Prénom *"
+                    value={contact.prenom}
+                    onChange={(e) => setContact((p) => ({ ...p, prenom: e.target.value }))}
+                  />
+
+                  <input
+                    className="w-full p-4 border-2 rounded-lg"
+                    placeholder="Nom *"
+                    value={contact.nom}
+                    onChange={(e) => setContact((p) => ({ ...p, nom: e.target.value }))}
+                 />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <input
+                    className="w-full p-4 border-2 rounded-lg"
+                    placeholder="Email *"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={contact.email}
+                    onChange={(e) => setContact((p) => ({ ...p, email: e.target.value }))}
+                  />
+                  <input
+                    className="w-full p-4 border-2 rounded-lg"
+                    placeholder="Téléphone (optionnel)"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    value={contact.telephone}
+                    onChange={(e) => setContact((p) => ({ ...p, telephone: e.target.value }))}
+                  />
+                </div>
+
+                <label className="flex items-start gap-3 p-3 border-2 rounded-lg mb-2">
+                  <input
+                    type="checkbox"
+                    className="checkbox-outline mt-1"
+                    checked={contact.consent}
+                    onChange={(e) => setContact((p) => ({ ...p, consent: e.target.checked }))}
+                  />
+                  <span className="text-sm text-gray-700 leading-relaxed">
+                    J’accepte d’être recontacté(e) par BGE PaRIF dans le cadre du traitement de ma demande d’orientation. *
+                  </span>
+                </label>
+
+                <div className="text-xs text-gray-500 mb-6 leading-relaxed">
+                  Les données sont utilisées uniquement pour vous recontacter et vous orienter. Conservation : 12 mois.
+                  Vous pouvez demander l’accès/la suppression de vos données en écrivant à contact@bge-parif.com.
+                </div>
+
+                {sendStatus.error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-4">
+                    {sendStatus.error}
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <button
+                    onClick={() => setShowContact(false)}
+                    className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  >
+                    ← Retour
+                  </button>
+
+                  <button
+                    disabled={sendStatus.loading}
+                    onClick={async () => {
+                      const msg = validateContact();
+                      if (msg) {
+                        setSendStatus({ loading: false, ok: false, error: msg });
+                        return;
+                      }
+
+                      setSendStatus({ loading: true, ok: false, error: "" });
+
+                      const eligible = computeEligibility();
+
+                      const payload = {
+                        createdAt: new Date().toISOString(),
+                        contact,
+                        answers,
+                        eligible: eligible.map((e) => e.nom),
+                        eligibleDetails: eligible, 
+                        userAgent: navigator.userAgent,
+                      };
+
+                      const ok = await sendLead(payload);
+
+                    if (!ok) {
+                      setSendStatus({
+                        loading: false,
+                        ok: false,
+                        error: "Impossible d’envoyer vos informations. Merci de réessayer.",
+                      });
+                      return;
+                    }
+
+                      setSendStatus({ loading: false, ok: true, error: "" });
+                      setResults(eligible);
+                    }}
+                      
+                    className="flex-1 text-white py-3 px-6 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed"
+                    style={{ backgroundColor: sendStatus.loading ? "#cbd5e1" : PRIMARY_COLOR }}
+                  >
+                    {sendStatus.loading ? "Envoi..." : "Voir mes résultats →"}
+                  </button>
+                </div>
+
+                <div className="mt-4 text-xs text-gray-400">
+                  * champs obligatoires
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       // Résultats
       if (results !== null) {
         return (
@@ -1095,7 +1273,7 @@
                     if (step < questions.length - 1) {
                       setStep(step + 1);
                     } else {
-                      calculateEligibility();
+                      setShowContact(true);
                     }
                   }}
 
