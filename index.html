@@ -387,12 +387,16 @@
           });
         }
 
-        q.push({
-          id: "inscritFranceTravail",
-          question: "Êtes-vous inscrit(e) à France Travail ?",
-          type: "radio",
-          options: ["Oui", "Non"],
-        });
+        const isSalariePleinTemps = answers.statut?.includes("Salarié à temps complet");
+
+        if (!isSalariePleinTemps) {
+          q.push({
+            id: "inscritFranceTravail",
+            question: "Êtes-vous inscrit(e) à France Travail ?",
+            type: "radio",
+            options: ["Oui", "Non"],
+          });
+        }
 
         // 4) Critères spécifiques
         q.push({
@@ -506,6 +510,17 @@
           validateField(questionId, value);
         }
       };
+      
+      useEffect(() => {
+        const isSalariePleinTemps = answers.statut?.includes("Salarié à temps complet");
+        if (isSalariePleinTemps && answers.inscritFranceTravail) {
+          setAnswers((prev) => {
+            const next = { ...prev };
+            delete next.inscritFranceTravail;
+            return next;
+          });
+        }
+      }, [answers.statut]);
 
       const computeEligibility = () => {
         const eligible = [];
