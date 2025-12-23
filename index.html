@@ -270,7 +270,6 @@
             options: ["Moins de 3 ans", "Plus de 3 ans"],
           });
 
-          // IMPORTANT: On ne demande le CA que si Entreprise ou Société
           if (answers.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc.)") {
             q.push({
               id: "caAnnuel",
@@ -286,10 +285,10 @@
             id: "stadeProjet",
             question: "À quel stade en est votre projet ?",
             type: "radio",
-            options: ["Idée", "Projet formalisé", "Business plan finalisé"],
+            options: ["Au tout début, j'ai simplement une idée", "J'ai déjà travaillé certains éléments mais rien de très approfondi", "J'ai déjà un Business Plan complet"],
           });
 
-          if (answers.stadeProjet === "Projet formalisé") {
+          if (stadeProjetNormalise === "Projet") {
             q.push({
               id: "projetImpact",
               question:
@@ -300,8 +299,8 @@
           }
 
           if (
-            answers.stadeProjet === "Projet formalisé" ||
-            answers.stadeProjet === "Business plan finalisé"
+            stadeProjetNormalise === "Projet" ||
+            stadeProjetNormalise === "Business plan
           ) {
             q.push({
               id: "activiteReglementee",
@@ -368,12 +367,14 @@
           question: "Quel est votre statut actuel ?",
           type: "checkbox",
           options: [
-            "Demandeur d'emploi",
+            "Chef d'entreprise",
             "Salarié à temps complet",
             "Salarié à temps partiel",
+            "Demandeur d'emploi",
             "Bénéficiaire RSA",
             "Bénéficiaire ASS",
             "Bénéficiaire AAH",
+            "Inactif",
           ],
         });
 
@@ -509,7 +510,20 @@
       const computeEligibility = () => {
         const eligible = [];
         const a = answers;
-      
+
+        const stadeProjetNormalise = (() => {
+          switch (a.stadeProjet) {
+            case "Au tout début, j’ai simplement une idée":
+              return "Idée";
+            case "J’ai déjà travaillé certains éléments mais rien de très approfondi":
+              return "Projet";
+            case "J’ai déjà un Business Plan complet":
+              return "Business plan";
+            default:
+              return null;
+          }
+        })();
+  
         const age = parseInt(a.age, 10) || 0;
 
         const isQPV = a.qpv === "Oui" || a.qpv === "Je ne sais pas";
@@ -546,7 +560,7 @@
         // 1. Accélérateur Émergence
         if (
           !entrepriseCreee &&
-          (a.stadeProjet === "Idée" || a.stadeProjet === "Projet formalisé") &&
+          (stadeProjetNormalise === "Idée" || stadeProjetNormalise === "Projet") &&
           isQPV &&
           !isSalariePleinTemps
         ) {
@@ -622,7 +636,7 @@
         }
 
         // 4. Générateur à Impact
-        if (!entrepriseCreee && a.stadeProjet === "Projet formalisé" && a.projetImpact === "Oui" && isDept75) {
+        if (!entrepriseCreee && stadeProjetNormalise === "Projet" && a.projetImpact === "Oui" && isDept75) {
           eligible.push({
             nom: "Générateur à Impact",
             description:
@@ -637,7 +651,7 @@
         // 5. Incubatest
         if (
           !entrepriseCreee &&
-          (a.stadeProjet === "Projet formalisé" || a.stadeProjet === "Business plan finalisé") &&
+          (stadeProjetNormalise === "Projet" || stadeProjetNormalise === "Business plan") &&
           isVilleIncubatest &&
           a.activiteReglementee === "Non" &&
           !isSalariePleinTemps
@@ -713,7 +727,7 @@
         }
 
         // 9. Accompagnement Renforcé
-        if (!entrepriseCreee && (a.stadeProjet === "Projet formalisé" || a.stadeProjet === "Business plan finalisé") && isQPV) {
+        if (!entrepriseCreee && (stadeProjetNormalise === "Projet" || stadeProjetNormalise === "Business plan") && isQPV) {
           eligible.push({
             nom: "Accompagnement Renforcé",
             description:
@@ -725,7 +739,7 @@
         }
 
         // 10. AGEFIPH
-        if (a.handicap === "Oui" && !entrepriseCreee && a.stadeProjet !== "Idée") {
+        if (a.handicap === "Oui" && !entrepriseCreee && stadeProjetNormalise === "Idée") {
           eligible.push({
             nom: "AGEFIPH",
             description:
@@ -741,7 +755,7 @@
         const exclusLeader1 = (a.sexe === "Un homme" && isSalariePleinTemps && age > 30);
         const activiteExclueLeader = a.activiteReglementee === "Oui";
 
-        if (age >= 18 && isIDF && a.stadeProjet !== "Idée" && !entrepriseCreee && !exclusLeader1 && !activiteExclueLeader) {
+        if (age >= 18 && isIDF && stadeProjetNormalise !== "Idée" && !entrepriseCreee && !exclusLeader1 && !activiteExclueLeader) {
           eligible.push({
             nom: "Pass Entrepreneur #Leader 1",
             description: "Dispositif d'accompagnement individuel destiné aux porteurs de projet en phase de création.",
@@ -765,7 +779,7 @@
         }
 
         // 13. Activ' Créa Émergence
-        if (a.inscritFranceTravail === "Oui" && isDemandeurEmploi && a.stadeProjet === "Idée" && !entrepriseCreee) {
+        if (a.inscritFranceTravail === "Oui" && isDemandeurEmploi && stadeProjetNormalise === "Idée" && !entrepriseCreee) {
           eligible.push({
             nom: "Activ' Créa Émergence",
             description:
