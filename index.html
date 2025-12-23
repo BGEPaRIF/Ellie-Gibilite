@@ -244,7 +244,7 @@
         }
       };
 
-      const getQuestions = () => {
+      const getQuestionsWithAnswers = (a) => {
         const q = [];
 
         // 1) Projet / entreprise
@@ -255,7 +255,7 @@
           options: ["Oui", "Non"],
         });
 
-        if (answers.entrepriseCreee === "Oui") {
+        if (a.entrepriseCreee === "Oui") {
           q.push({
             id: "typeEntreprise",
             question: "Quel est le statut juridique de votre entreprise ?",
@@ -270,7 +270,7 @@
             options: ["Moins de 3 ans", "Plus de 3 ans"],
           });
 
-          if (answers.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc.)") {
+          if (a.typeEntreprise === "Entreprise ou Société (EURL, SAS, etc.)") {
             q.push({
               id: "caAnnuel",
               question: "Quel est votre chiffre d'affaires annuel ?",
@@ -280,7 +280,7 @@
           }
         }
 
-        if (answers.entrepriseCreee === "Non") {
+        if (a.entrepriseCreee === "Non") {
           q.push({
             id: "stadeProjet",
             question: "À quel stade en est votre projet ?",
@@ -288,7 +288,7 @@
             options: ["Au tout début, j'ai simplement une idée", "J'ai déjà travaillé certains éléments mais rien de très approfondi", "J'ai déjà un Business Plan complet"],
           });
 
-          if (answers.stadeProjet === "J'ai déjà travaillé certains éléments mais rien de très approfondi") {
+          if (a.stadeProjet === "J'ai déjà travaillé certains éléments mais rien de très approfondi") {
             q.push({
               id: "projetImpact",
               question:
@@ -299,8 +299,8 @@
           }
 
           if (
-            answers.stadeProjet === "J'ai déjà travaillé certains éléments mais rien de très approfondi" ||
-            answers.stadeProjet === "J'ai déjà un Business Plan complet"
+            a.stadeProjet === "J'ai déjà travaillé certains éléments mais rien de très approfondi" ||
+            a.stadeProjet === "J'ai déjà un Business Plan complet"
           ) {
             q.push({
               id: "activiteReglementee",
@@ -327,7 +327,7 @@
           placeholder: "Ex: 30",
         });
 
-        const age = parseInt(answers.age, 10) || 0;
+        const age = parseInt(a.age, 10) || 0;
         if (age >= 18 && age <= 30) {
           q.push({
             id: "missionLocale",
@@ -378,7 +378,7 @@
           ],
         });
 
-        if (answers.statut?.includes("Demandeur d'emploi")) {
+        if (a.statut?.includes("Demandeur d'emploi")) {
           q.push({
             id: "dureeDemandeurEmploi",
             question: "Depuis combien de temps êtes-vous demandeur d'emploi ?",
@@ -387,7 +387,7 @@
           });
         }
 
-        const isSalariePleinTemps = answers.statut?.includes("Salarié à temps complet");
+        const isSalariePleinTemps = a.statut?.includes("Salarié à temps complet");
 
         if (!isSalariePleinTemps) {
           q.push({
@@ -420,7 +420,7 @@
           options: ["Oui", "Non"],
         });
 
-        if (answers.handicap === "Oui") {
+        if (a.handicap === "Oui") {
           q.push({
             id: "inscritCapEmploi",
             question: "Êtes-vous inscrit(e) à Cap Emploi ?",
@@ -450,7 +450,7 @@
         return q;
       };
 
-      const questions = useMemo(() => getQuestions(), [answers]);
+      const questions = useMemo(() => getQuestionsWithAnswers(answers), [answers]);
       const currentQuestion = questions[step];
 
       useEffect(() => {
@@ -458,6 +458,12 @@
           setStep(questions.length - 1);
         }
       }, [step, questions.length]);
+
+      useEffect(() => {
+        if (!questions[step]) {
+          setStep(Math.max(0, questions.length - 1));
+        }
+      }, [questions, step]);
 
       if (!currentQuestion) {
         return <div className="p-6 text-gray-600">Chargement…</div>;
@@ -491,26 +497,40 @@
           ? answers[currentQuestion.id].length > 0
           : true);
 
+      const pruneAnswers = (draftAnswers) => {
+        // Recalcule les questions visibles avec ces réponses
+        const visibleQuestions = getQuestionsWithAnswers(draftAnswers);
+        const allowedIds = new Set(visibleQuestions.map((qq) => qq.id));
+
+        // Ne garder que les réponses dont l'ID est encore visible
+        const cleaned = {};
+        for (const [k, v] of Object.entries(draftAnswers)) {
+          if (allowedIds.has(k)) cleaned[k] = v;
+        }
+        return cleaned;
+      };
+
       const handleAnswer = (questionId, value) => {
-        // 🔹 Règle existante : "Aucun de ces critères"
+        // règle "Aucun de ces critères"
         if (questionId === "criteresSociaux" && Array.isArray(value)) {
           if (value.includes("Aucun de ces critères") && value.length > 1) {
             value = ["Aucun de ces critères"];
           }
         }
-        
-        // ✅ 1) On enregistre la réponse
-        setAnswers((prev) => ({ ...prev, [questionId]: value }));
 
-        // ✅ 2) Optionnel : on efface l'erreur affichée dès que l'utilisateur retape
+        setAnswers((prev) => {
+          const draft = { ...prev, [questionId]: value };
+          const cleaned = pruneAnswers(draft);
+          return cleaned;
+        });
+
         setErrors((prev) => ({ ...prev, [questionId]: "" }));
 
-        // ✅ 3) Validation live pour âge + code postal
         if (questionId === "age" || questionId === "codePostal") {
           validateField(questionId, value);
         }
       };
-      
+
       useEffect(() => {
         const isSalariePleinTemps = answers.statut?.includes("Salarié à temps complet");
         if (isSalariePleinTemps && answers.inscritFranceTravail) {
