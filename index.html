@@ -288,7 +288,7 @@
             options: ["Au tout début, j'ai simplement une idée", "J'ai déjà travaillé certains éléments mais rien de très approfondi", "J'ai déjà un Business Plan complet"],
           });
 
-          if (stadeProjetNormalise === "Projet") {
+          if (answers.stadeProjet === "J'ai déjà travaillé certains éléments mais rien de très approfondi") {
             q.push({
               id: "projetImpact",
               question:
@@ -299,8 +299,8 @@
           }
 
           if (
-            stadeProjetNormalise === "Projet" ||
-            stadeProjetNormalise === "Business plan
+            answers.stadeProjet === "J'ai déjà travaillé certains éléments mais rien de très approfondi" ||
+            answers.stadeProjet === "J'ai déjà un Business Plan complet"
           ) {
             q.push({
               id: "activiteReglementee",
@@ -513,11 +513,11 @@
 
         const stadeProjetNormalise = (() => {
           switch (a.stadeProjet) {
-            case "Au tout début, j’ai simplement une idée":
+            case "Au tout début, j'ai simplement une idée":
               return "Idée";
-            case "J’ai déjà travaillé certains éléments mais rien de très approfondi":
+            case "J'ai déjà travaillé certains éléments mais rien de très approfondi":
               return "Projet";
-            case "J’ai déjà un Business Plan complet":
+            case "J'ai déjà un Business Plan complet":
               return "Business plan";
             default:
               return null;
